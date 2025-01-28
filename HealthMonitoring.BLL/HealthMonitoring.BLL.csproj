@@ -7,10 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AutoMapper\" />
     <Folder Include="Dtos\" />
     <Folder Include="IServices\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HealthMonitoring.DAL\HealthMonitoring.DAL.csproj" />
   </ItemGroup>
 
 </Project>
