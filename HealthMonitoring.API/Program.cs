@@ -1,12 +1,22 @@
+
+using HealthMonitoring.DAL.Data.DbHelper;
+using HealthMonitoring.DAL.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<HealthMonitoringContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Cs"));
+});
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<HealthMonitoringContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
