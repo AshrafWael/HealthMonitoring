@@ -11,9 +11,45 @@ namespace HealthMonitoring.DAL.Configrations
 {
     public class ApplicationUserEntityTypeConfigration : IEntityTypeConfiguration<ApplicationUser>
     {
+
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            throw new NotImplementedException();
+            builder.HasMany(u=> u.activityDatas)
+                   .WithOne(h=> h.User)
+                   .HasForeignKey(ad => ad.UserId);
+
+            builder.HasMany(u => u.EmergencyContacts)
+                  .WithOne(h => h.User)
+                  .HasForeignKey(EC => EC.UserId);
+
+            builder.HasMany(u => u.HealthSuggestions)
+                  .WithOne(h => h.User)
+                  .HasForeignKey(hs => hs.UserId);
+
+            builder.HasMany(u => u.HealthInformation)
+                  .WithOne(h => h.User)
+                  .HasForeignKey(hi => hi.UserId);
+
+            builder.HasMany(u => u.HeartRateDatas)
+                  .WithOne(h => h.User)
+                  .HasForeignKey(hr => hr.UserId);
+
+            builder.HasMany(u => u.Notifications)
+                  .WithOne(h => h.User)
+                  .HasForeignKey(n => n.UserId);
+
+            builder.Property(u => u.FirstName)
+                   .IsRequired()
+                   .HasMaxLength(50);
+            builder.Property(u => u.LastName)
+                  .IsRequired()
+                  .HasMaxLength(50);
+            builder.Property(u => u.PhoneNumber)
+                   .HasMaxLength(20);
+            builder.Property(u => u.Gender)
+                    .IsRequired();
+
+
         }
     }
 }
