@@ -26,7 +26,7 @@ namespace HealthMonitoring.DAL.Data.Models
 
 
         [ForeignKey("Contact")]
-        public string ContactId { get; set; }
+        public int ContactId { get; set; }
         public EmergencyContacts Contact { get; set; }
 
     }
