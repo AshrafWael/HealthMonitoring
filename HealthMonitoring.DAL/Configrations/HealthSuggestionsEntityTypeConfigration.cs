@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HealthMonitoring.DAL.Configrations
 {
-    public class HealthSuggestionsEntityTypeConfigration : IEntityTypeConfiguration<HealthSuggestions>
+    public class HealthSuggestionsEntityTypeConfigration : IEntityTypeConfiguration<HealthSuggestion>
     {
-        public void Configure(EntityTypeBuilder<HealthSuggestions> builder)
+        public void Configure(EntityTypeBuilder<HealthSuggestion> builder)
         {
             builder.HasOne(u => u.User)
                    .WithMany(H => H.HealthSuggestions)

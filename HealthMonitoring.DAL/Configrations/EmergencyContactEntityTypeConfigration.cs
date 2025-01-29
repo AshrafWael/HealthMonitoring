@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HealthMonitoring.DAL.Configrations
 {
-    public class EmergencyContactEntityTypeConfigration : IEntityTypeConfiguration<EmergencyContacts>
+    public class EmergencyContactEntityTypeConfigration : IEntityTypeConfiguration<EmergencyContact>
     {
-        public void Configure(EntityTypeBuilder<EmergencyContacts> builder)
+        public void Configure(EntityTypeBuilder<EmergencyContact> builder)
         {
             builder.Property(u => u.PhoneNumber)
                 .IsRequired();
