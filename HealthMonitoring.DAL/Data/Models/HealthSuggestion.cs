@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.DAL.Data.Models
 {
-    public class HealthSuggestions
+    public class HealthSuggestion
     {
         //Stores AI-generated health suggestions
         //.Health recommendations and suggestions are based on manually entered data.

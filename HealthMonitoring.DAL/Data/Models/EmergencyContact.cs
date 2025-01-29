@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.DAL.Data.Models
 {
-    public  class EmergencyContacts
+    public  class EmergencyContact
     {
         [Key]
         public int ContactId { get; set; }

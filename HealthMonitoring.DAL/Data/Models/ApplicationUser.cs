@@ -21,10 +21,10 @@ namespace HealthMonitoring.DAL.Data.Models
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         //Navigation Proprty
         public ICollection<ActivityData> activityDatas { get; set; }
-        public ICollection<EmergencyContacts> EmergencyContacts { get; set; }
+        public ICollection<EmergencyContact> EmergencyContacts { get; set; }
         public ICollection<HealthInformation> HealthInformation { get; set; }
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }
-        public ICollection<HealthSuggestions> HealthSuggestions { get; set; }   
+        public ICollection<HealthSuggestion> HealthSuggestions { get; set; }   
         public ICollection<Notification> Notifications  { get; set; }
 
 
