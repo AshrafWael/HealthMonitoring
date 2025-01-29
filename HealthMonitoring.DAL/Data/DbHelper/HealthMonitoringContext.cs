@@ -17,8 +17,8 @@ namespace HealthMonitoring.DAL.Data.DbHelper
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ActivityData> ActivityDatas { get; set; }
-        public DbSet<EmergencyContacts> EmergencyContacts { get; set; }
-        public DbSet<HealthSuggestions> HealthSuggestions { get; set; }
+        public DbSet<EmergencyContact> EmergencyContacts { get; set; }
+        public DbSet<HealthSuggestion> HealthSuggestions { get; set; }
         public DbSet<HeartRateData> HeartRateDatas { get; set; }
         public DbSet<HealthInformation> HealthInformations { get; set; }
         public DbSet<MedicalNews> MedicalNewsDatas { get; set; }
