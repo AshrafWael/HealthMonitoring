@@ -10,11 +10,16 @@ namespace HealthMonitoring.DAL.IRepository
 {
     public interface IBaseRepository<T> where T : class
     {
-         Task<IEnumerable<T>> GetAllAsync();
+         Task<IEnumerable<T>> GetAllAsync(int pagesize = 0, int pagenumber = 1);
          Task<T> GetByIdAsync(int id);
-         Task<T> FindAsync(Expression<Func<T, bool>> Match, string[] includs = null);
-         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> Match,int? take,int? skip, string[] includs = null,
-                                    Expression<Func<T,Object>> ordereby= null,string orderbydirection = OrderBy.Ascending  );
+         Task<T> FindAsync(Expression<Func<T, bool>> criteria, string[] includs = null);
+         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> criteria,int? take,int? skip, string[] includs = null,
+                           Expression<Func<T,Object>>ordereby=null,string orderbydirection=OrderBy.Ascending);
+         Task CreateAsync(T entity);
+         Task RemoveAsync(T entity);
+       
+
+
 
     }
 }
