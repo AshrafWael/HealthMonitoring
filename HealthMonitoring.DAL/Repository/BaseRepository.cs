@@ -15,19 +15,24 @@ namespace HealthMonitoring.DAL.Repository
     {
         private readonly HealthMonitoringContext _dbcontext;
         internal DbSet<T> _dbset;
-
         public BaseRepository( HealthMonitoringContext dbcontext)
         {
             _dbcontext = dbcontext;
             _dbset = _dbcontext.Set<T>();   
         }
-        public async Task<IEnumerable<T>>  GetAllAsync()
+        public async Task<IEnumerable<T>>  GetAllAsync(int pagesize = 0,int pagenumber =1)
         {
             IQueryable<T> query = _dbset;
+            if (pagesize > 0)
+            {
+                if (pagesize > 100)
+                { pagesize = 100; }
+                query = query.Skip(pagesize * (pagenumber - 1)).Take(pagesize);
+            }
             return await query.ToListAsync(); 
         }
         public async Task<T> GetByIdAsync(int id)=> await _dbset.FindAsync(id);
-        public async Task<T> FindAsync(Expression<Func<T, bool>> Match,string[] includs= null)
+        public async Task<T> FindAsync(Expression<Func<T, bool>> criteria,string[] includs= null)
         {
             IQueryable<T> query = _dbset;
             if (includs != null)
@@ -38,15 +43,15 @@ namespace HealthMonitoring.DAL.Repository
                 }
 
             }
-                return await query.SingleOrDefaultAsync(Match);
+                return await query.SingleOrDefaultAsync(criteria);
         }
 
     
 
-        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> Match, int? take, int? skip, string[] includs = null,
-            Expression<Func<T, object>> ordereby = null, string orderbydirection = OrderBy.Ascending)
+        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> criteria, int? take, int? skip,
+            string[] includs=null,Expression<Func<T, object>>ordereby=null,string orderbydirection=OrderBy.Ascending)
         {
-            IQueryable<T> query = _dbset.Where(Match);
+            IQueryable<T> query = _dbset.Where(criteria);
             if (take.HasValue)
                 query = query.Take(take.Value);
             if (skip.HasValue)
@@ -72,5 +77,15 @@ namespace HealthMonitoring.DAL.Repository
             return await query.ToListAsync();
 
         }
+
+        public async Task CreateAsync(T entity)
+        {
+            await _dbset.AddAsync(entity);
+        }
+        public async Task RemoveAsync(T entity)
+        {
+            _dbset.Remove(entity);
+        }
+     
     }
 }
