@@ -13,9 +13,18 @@ namespace HealthMonitoring.DAL.Configrations
     {
         public void Configure(EntityTypeBuilder<MedicalNews> builder)
         {
-           
 
-         
+            builder.Property(x => x.Title)
+           .IsRequired()
+           .HasMaxLength(200);
+
+            builder.Property(x => x.Description)
+                .IsRequired()
+                .HasMaxLength(2000);
+
+            builder.Property(x => x.Link)
+                .HasMaxLength(500);
+
         }
     }
 }

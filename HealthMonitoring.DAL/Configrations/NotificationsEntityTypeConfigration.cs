@@ -20,6 +20,18 @@ namespace HealthMonitoring.DAL.Configrations
             builder.HasOne(u => u.Contact)
                   .WithMany(H => H.notifications)
                   .HasForeignKey(u => u.ContactId);
+
+
+            builder.Property(x => x.Message)
+          .IsRequired()
+          .HasMaxLength(500);
+
+            builder.Property(x => x.NotificationType)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(x => x.Type)
+                .HasMaxLength(50);
         }
     }
 }

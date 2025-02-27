@@ -34,6 +34,7 @@ namespace HealthMonitoring.DAL.Data.DbHelper
             modelBuilder.ApplyConfiguration(new MedicalNewsEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new NotificationsEntityTypeConfigration());
             base.OnModelCreating(modelBuilder);
+
         }
 
     }

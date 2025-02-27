@@ -15,8 +15,6 @@ namespace HealthMonitoring.DAL.Data.Models
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-
-
         [ForeignKey("User")]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }

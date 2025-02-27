@@ -39,15 +39,14 @@ namespace HealthMonitoring.DAL.Configrations
                   .HasForeignKey(n => n.UserId);
 
             builder.Property(u => u.FirstName)
-                   .IsRequired()
+                  
                    .HasMaxLength(50);
             builder.Property(u => u.LastName)
-                  .IsRequired()
+                  
                   .HasMaxLength(50);
             builder.Property(u => u.PhoneNumber)
                    .HasMaxLength(20);
-            builder.Property(u => u.Gender)
-                    .IsRequired();
+         
 
 
         }

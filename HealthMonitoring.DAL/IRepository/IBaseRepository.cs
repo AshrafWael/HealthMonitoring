@@ -16,6 +16,7 @@ namespace HealthMonitoring.DAL.IRepository
          Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> criteria,int? take,int? skip, string[] includs = null,
                            Expression<Func<T,Object>>ordereby=null,string orderbydirection=OrderBy.Ascending);
          Task CreateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
          Task RemoveAsync(T entity);
        
 

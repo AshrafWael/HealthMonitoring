@@ -86,6 +86,12 @@ namespace HealthMonitoring.DAL.Repository
         {
             _dbset.Remove(entity);
         }
-     
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+              _dbset.Update(entity);
+            return entity;
+            
+        }
     }
 }

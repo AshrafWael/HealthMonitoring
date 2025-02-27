@@ -16,15 +16,11 @@ namespace HealthMonitoring.DAL.Data.Models
         public string NotificationType { get; set; } // e.g., Water Reminder
         public DateTime SentAt { get; set; }
         public bool IsRead { get; set; } // Whether the notification has been read
-
         public string Type { get; set; }
 
         [ForeignKey("User")]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-
-
-
         [ForeignKey("Contact")]
         public int ContactId { get; set; }
         public EmergencyContact Contact { get; set; }
