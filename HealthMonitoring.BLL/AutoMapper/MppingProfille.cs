@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HealthMonitoring.BLL.Dtos.AccountUserDtos;
 using HealthMonitoring.BLL.Dtos.ActivityDataDtos;
+using HealthMonitoring.BLL.Dtos.AIModelDtos;
 using HealthMonitoring.BLL.Dtos.ApplicationUserDtos;
 using HealthMonitoring.DAL.Data.Models;
+using HealthMonitoring.DAL.Data.Models.AIModels;
 using Microsoft.AspNetCore.Identity.Data;
 
 namespace HealthMonitoring.BLL.AutoMapper
@@ -30,6 +32,14 @@ namespace HealthMonitoring.BLL.AutoMapper
             CreateMap<ApplicationUser, LoginRequest>().ReverseMap();
             CreateMap<ApplicationUser, RegisterRequestDto>().ReverseMap();
             CreateMap<ApplicationUser, LoginResponseDto>().ReverseMap();
+
+
+            CreateMap<BloodPressureReading, BloodPressureReadingDto>().ReverseMap();
+            CreateMap<BloodPressurePrediction, BloodPressureReadingDto>().ReverseMap();
+            CreateMap<SensorDataSet, SensorDataSetDto>().ReverseMap();
+            CreateMap<SensorDataPoint, DataPointDto>().ReverseMap();
+            CreateMap<SensorDataSet, DataSetUploadDto>().ReverseMap();
+
 
 
 
