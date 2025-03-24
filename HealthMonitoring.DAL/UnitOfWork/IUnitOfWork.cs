@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HealthMonitoring.DAL.Data.Models;
 using HealthMonitoring.DAL.IRepository;
+using HealthMonitoring.DAL.IRepository.IAIRepository;
 
 namespace HealthMonitoring.DAL.UnitOfWork
 {
@@ -14,6 +15,8 @@ namespace HealthMonitoring.DAL.UnitOfWork
         IActivityDataRepository ActivityDatas { get; }
         INotificationRepository NotificationDatas { get; }
         IHeartRateDataRepository HeartRateDatas { get; }
+        IBloodPressureReadingRepository bloodPressureReading {  get; }
+        ISensorDataSetRepository sensorDataSet {  get; }
         IUserRepository Users { get; }
         IBaseRepository<EmergencyContact> EmergencyContacts { get; }
         int SaveChanges ();

@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using HealthMonitoring.DAL.Data.DbHelper;
 using HealthMonitoring.DAL.Data.Models;
+using HealthMonitoring.DAL.Data.Models.AIModels;
 using HealthMonitoring.DAL.IRepository;
+using HealthMonitoring.DAL.IRepository.IAIRepository;
 using HealthMonitoring.DAL.Repository;
+using HealthMonitoring.DAL.Repository.AIRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthMonitoring.DAL.UnitOfWork
@@ -20,6 +23,8 @@ namespace HealthMonitoring.DAL.UnitOfWork
         public IUserRepository Users { get; private set; }
        public IBaseRepository<EmergencyContact> EmergencyContacts { get; private set; }
 
+        public IBloodPressureReadingRepository bloodPressureReading { get; private set; }
+        public ISensorDataSetRepository sensorDataSet { get; private set; }
 
         public UnitOfWork(HealthMonitoringContext dbcontext)
         {
@@ -28,6 +33,8 @@ namespace HealthMonitoring.DAL.UnitOfWork
             HeartRateDatas = new HeartRateDataRepository(_dbcontext);
             NotificationDatas = new NotificationRepository(_dbcontext);
             EmergencyContacts = new BaseRepository<EmergencyContact>(_dbcontext);
+            bloodPressureReading = new BloodPressureReadingRepository(_dbcontext);
+            sensorDataSet = new SensorDataSetRepository(_dbcontext);
             Users = new UserRepository(_dbcontext);
         }
         public int SaveChanges()
