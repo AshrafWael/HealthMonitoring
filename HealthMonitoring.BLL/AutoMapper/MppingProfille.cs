@@ -36,10 +36,12 @@ namespace HealthMonitoring.BLL.AutoMapper
 
             CreateMap<BloodPressureReading, BloodPressureReadingDto>().ReverseMap();
             CreateMap<BloodPressurePrediction, BloodPressureReadingDto>().ReverseMap();
-            CreateMap<SensorDataSet, SensorDataSetDto>().ReverseMap();
-            CreateMap<SensorDataPoint, DataPointDto>().ReverseMap();
-            CreateMap<SensorDataSet, DataSetUploadDto>().ReverseMap();
-
+           // CreateMap<SensorDataPoint, DataPointDto>().ReverseMap();
+            CreateMap<SensorDataPoint, DataPointDto>()
+            .ForMember(dest => dest.PPG, opt => opt.MapFrom(src => new List<double> { src.PPG }))
+            .ForMember(dest => dest.ABP, opt => opt.MapFrom(src => new List<double> { src.ABP }))
+            .ForMember(dest => dest.ECG, opt => opt.MapFrom(src => new List<double> { src.ECG }))
+            .ReverseMap();
 
 
 
