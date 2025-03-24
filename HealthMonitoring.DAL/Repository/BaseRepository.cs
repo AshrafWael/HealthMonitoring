@@ -13,7 +13,7 @@ namespace HealthMonitoring.DAL.Repository
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly HealthMonitoringContext _dbcontext;
+        protected readonly HealthMonitoringContext _dbcontext;
         internal DbSet<T> _dbset;
         public BaseRepository( HealthMonitoringContext dbcontext)
         {
@@ -82,6 +82,11 @@ namespace HealthMonitoring.DAL.Repository
         {
             await _dbset.AddAsync(entity);
         }
+        public async Task AddrangeAsync(T entity)
+        {
+            await _dbset.AddRangeAsync(entity);
+        }
+      
         public async Task RemoveAsync(T entity)
         {
             _dbset.Remove(entity);
