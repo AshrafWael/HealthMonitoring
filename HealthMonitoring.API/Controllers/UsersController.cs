@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using HealthMonitoring.DAL.UnitOfWork;
 using HealthMonitoring.BLL.IServices;
 using HealthMonitoring.BLL.Dtos.ApplicationUserDtos;
+using HealthMonitoring.BLL.Dtos.AIModelDtos;
+using HealthMonitoring.BLL.Services;
 
 namespace HealthMonitoring.API.Controllers
 {
@@ -97,6 +99,11 @@ namespace HealthMonitoring.API.Controllers
             }
             return _response;
         }
+
+
+
+
+    
 
 
     }
