@@ -1,4 +1,6 @@
 
+using System.Net.Http.Headers;
+using System.Net;
 using System.Text;
 using HealthMonitoring.BLL.AutoMapper;
 using HealthMonitoring.BLL.IServices;
@@ -11,6 +13,8 @@ using HealthMonitoring.DAL.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,13 +32,31 @@ builder.Services.AddDbContext<HealthMonitoringContext>(options =>
 builder.Services.AddAutoMapper(typeof(MppingProfille));
 
 
-//builder.Services.AddScoped(typeof(IBaseRepository<>),typeof(BaseRepository<>));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
+builder.Services.AddScoped<ISensorDataService, SensorDataService>();
+builder.Services.AddScoped<IAIModelService, AIModelService>();
+builder.Services.AddHttpClient<IAIModelService, AIModelService>();
+
 builder.Services.AddScoped<IAuthServices, AuthServices>();
+builder.Services.AddScoped<IBaseSrvice, BaseService>(); 
+builder.Services.AddHttpClient<AIModelService>();
+builder.Services.AddMemoryCache();
+//builder.Services.AddMemoryCache(options =>
+//{
+//    options.SizeLimit = 512 * 1024 * 1024; // 512 limit
+//});
+
+
 #region Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<HealthMonitoringContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => 
+{
+    Options.Password.RequireNonAlphanumeric = false;
+    Options.Password.RequireLowercase = false;
+    Options.Password.RequireUppercase = false;
+    Options.Password.RequiredLength = 5;
+
+}) .AddEntityFrameworkStores<HealthMonitoringContext>();
 #endregion
 #region Authenyication
 var key = builder.Configuration.GetValue<string>("ApiSettings:SecretKey");
