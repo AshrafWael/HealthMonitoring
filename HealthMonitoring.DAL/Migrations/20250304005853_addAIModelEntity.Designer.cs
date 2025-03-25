@@ -4,6 +4,7 @@ using HealthMonitoring.DAL.Data.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthMonitoring.DAL.Migrations
 {
     [DbContext(typeof(HealthMonitoringContext))]
-    partial class HealthMonitoringContextModelSnapshot : ModelSnapshot
+    [Migration("20250304005853_addAIModelEntity")]
+    partial class addAIModelEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,14 +33,18 @@ namespace HealthMonitoring.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BatchId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<double>("DiastolicPressure")
-                        .HasColumnType("float");
+                    b.Property<float>("DiastolicPressure")
+                        .HasColumnType("real");
 
-                    b.Property<double>("SystolicPressure")
-                        .HasColumnType("float");
+                    b.Property<float>("SystolicPressure")
+                        .HasColumnType("real");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
@@ -61,27 +68,53 @@ namespace HealthMonitoring.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("ABP")
-                        .HasColumnType("float");
+                    b.Property<float>("APPValue")
+                        .HasColumnType("real");
 
-                    b.Property<double>("ECG")
-                        .HasColumnType("float");
+                    b.Property<int>("DataSetId")
+                        .HasColumnType("int");
 
-                    b.Property<double>("PPG")
-                        .HasColumnType("float");
+                    b.Property<float>("ECGValue")
+                        .HasColumnType("real");
 
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
+                    b.Property<float>("PPGValue")
+                        .HasColumnType("real");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DataSetId");
 
                     b.ToTable("sensorDataPoints");
+                });
+
+            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.AIModels.SensorDataSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("sensorDataSets");
                 });
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.ActivityData", b =>
@@ -558,13 +591,13 @@ namespace HealthMonitoring.DAL.Migrations
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.AIModels.SensorDataPoint", b =>
                 {
-                    b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("HealthMonitoring.DAL.Data.Models.AIModels.SensorDataSet", "DataSet")
+                        .WithMany("DataPoints")
+                        .HasForeignKey("DataSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("DataSet");
                 });
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.ActivityData", b =>
@@ -690,6 +723,11 @@ namespace HealthMonitoring.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.AIModels.SensorDataSet", b =>
+                {
+                    b.Navigation("DataPoints");
                 });
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.ApplicationUser", b =>

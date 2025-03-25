@@ -4,6 +4,7 @@ using HealthMonitoring.DAL.Data.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthMonitoring.DAL.Migrations
 {
     [DbContext(typeof(HealthMonitoringContext))]
-    partial class HealthMonitoringContextModelSnapshot : ModelSnapshot
+    [Migration("20250320154931_updatedatebase")]
+    partial class updatedatebase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

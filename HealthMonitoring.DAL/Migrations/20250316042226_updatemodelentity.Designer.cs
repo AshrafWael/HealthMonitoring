@@ -4,6 +4,7 @@ using HealthMonitoring.DAL.Data.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthMonitoring.DAL.Migrations
 {
     [DbContext(typeof(HealthMonitoringContext))]
-    partial class HealthMonitoringContextModelSnapshot : ModelSnapshot
+    [Migration("20250316042226_updatemodelentity")]
+    partial class updatemodelentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,11 +36,11 @@ namespace HealthMonitoring.DAL.Migrations
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
-                    b.Property<double>("DiastolicPressure")
-                        .HasColumnType("float");
+                    b.Property<float>("DiastolicPressure")
+                        .HasColumnType("real");
 
-                    b.Property<double>("SystolicPressure")
-                        .HasColumnType("float");
+                    b.Property<float>("SystolicPressure")
+                        .HasColumnType("real");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
@@ -61,17 +64,14 @@ namespace HealthMonitoring.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("ABP")
-                        .HasColumnType("float");
+                    b.Property<float>("APPValue")
+                        .HasColumnType("real");
 
-                    b.Property<double>("ECG")
-                        .HasColumnType("float");
+                    b.Property<float>("ECGValue")
+                        .HasColumnType("real");
 
-                    b.Property<double>("PPG")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
+                    b.Property<float>("PPGValue")
+                        .HasColumnType("real");
 
                     b.Property<string>("UserId")
                         .IsRequired()
