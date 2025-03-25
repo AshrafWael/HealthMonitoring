@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HealthMonitoring.DAL.Data.Models.AIModels;
 using Microsoft.AspNetCore.Identity;
 
 namespace HealthMonitoring.DAL.Data.Models
@@ -26,5 +27,6 @@ namespace HealthMonitoring.DAL.Data.Models
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }
         public ICollection<HealthSuggestion> HealthSuggestions { get; set; }   
         public ICollection<Notification> Notifications  { get; set; }
+        public ICollection<BloodPressureReading> bloodPressureReadings { get; set; }
     }
 }
