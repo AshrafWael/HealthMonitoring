@@ -11,47 +11,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HealthMonitoring.DAL.Repository.AIRepository
 {
-    public class SensorDataSetRepository : BaseRepository<SensorDataPoint>, ISensorDataSetRepository
+    public class SensorDataSetRepository : BaseRepository<SensorDataSet>, ISensorDataSetRepository
     {
         public SensorDataSetRepository(HealthMonitoringContext dbcontext) : base(dbcontext)
         {
         }
-
-        public async Task<List<SensorDataPoint>> GetByUserIdAsync(string userId, int count,int skip  = 0 )
+        // get spefic amount of data set by user id 
+        public async Task<List<SensorDataSet>> GetByUserIdAsync(string userId, int count,int skip  = 0 )
         {
-            //return await _dbcontext.sensorDataPoints
-            //    .Where(d => d.UserId == userId)
-            //    .Take(count)
-            //    .ToListAsync();
-
-            // Use AsNoTracking for read-only operations
-            return await _dbcontext.sensorDataPoints
+            return await _dbcontext.sensorDataSets
                 .AsNoTracking()
                 .Where(d => d.UserId == userId)
-                .OrderByDescending(d => d.Timestamp) // Assuming you want the most recent data
+                .OrderByDescending(d => d.Timestamp) 
                 .Skip(skip)
                 .Take(count)
                 .ToListAsync();
         }
-
-        public async Task<List<SensorDataPoint>> GetLatestBatchByUserIdAsync(string userId)
+        //Get All data set by user id
+        public async Task<List<SensorDataSet>> GetSensordataByUserIdAsync(string userId)
         {
-
-
-            return await _dbcontext.sensorDataPoints
+            return await _dbcontext.sensorDataSets
+                .AsNoTracking()
                 .Where(d => d.UserId == userId  )
                 .OrderBy(d => d.Id)
                 .ToListAsync();
         }
-
-        public async Task<List<SensorDataPoint>> GetByUserIdBatchedAsync(string userId, int batchSize, int totalNeeded)
+        public async Task<List<SensorDataSet>> GetByUserIdBatchedAsync(string userId, int batchSize, int totalNeeded)
         {
-            var result = new List<SensorDataPoint>();
+            var result = new List<SensorDataSet>();
             int processedCount = 0;
 
             while (processedCount < totalNeeded)
             {
-                var batch = await _dbcontext.sensorDataPoints
+                var batch = await _dbcontext.sensorDataSets
                     .AsNoTracking()
                     .Where(d => d.UserId == userId)
                     .OrderByDescending(d => d.Timestamp)
@@ -71,11 +63,10 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
 
             return result.Take(totalNeeded).ToList();
         }
-    
-
-        public async Task Addrange(List<SensorDataPoint> batch)
+        public async Task AddrangeAsync(List<SensorDataSet> sensorDatas)
         {
-            await _dbset.AddRangeAsync(batch);
+            await _dbset.AddRangeAsync(sensorDatas);
         }
+
     }
 }
