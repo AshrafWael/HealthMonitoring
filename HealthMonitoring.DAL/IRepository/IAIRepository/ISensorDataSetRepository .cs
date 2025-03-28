@@ -7,11 +7,11 @@ using HealthMonitoring.DAL.Data.Models.AIModels;
 
 namespace HealthMonitoring.DAL.IRepository.IAIRepository
 {
-    public interface ISensorDataSetRepository :IBaseRepository<SensorDataPoint>
+    public interface ISensorDataSetRepository :IBaseRepository<SensorDataSet>
     {
-        Task<List<SensorDataPoint>> GetByUserIdAsync(string userId,int count, int skip = 0);
-        public  Task<List<SensorDataPoint>> GetByUserIdBatchedAsync(string userId, int batchSize, int totalNeeded);
-        public Task Addrange(List<SensorDataPoint> batch);
+         Task<List<SensorDataSet>> GetByUserIdAsync(string userId,int count, int skip = 0);
+         Task<List<SensorDataSet>> GetByUserIdBatchedAsync(string userId, int batchSize, int totalNeeded);
+        Task AddrangeAsync(List<SensorDataSet> sensorDatas);
 
     }
 }

@@ -9,7 +9,7 @@ namespace HealthMonitoring.DAL.IRepository.IAIRepository
 {
     public interface IBloodPressureReadingRepository :IBaseRepository<BloodPressureReading>
     {
-        Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count = 10);
+        Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count);
         Task<BloodPressureReading> GetLatestByUserIdAsync(string userId);
 
     }
