@@ -35,18 +35,12 @@ builder.Services.AddAutoMapper(typeof(MppingProfille));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
-builder.Services.AddScoped<IAIModelService, AIModelService>();
-builder.Services.AddHttpClient<IAIModelService, AIModelService>();
-
+builder.Services.AddScoped<IBloodPressurePredictionService, BloodPressurePredictionService>();
+builder.Services.AddHttpClient<IBloodPressurePredictionService, BloodPressurePredictionService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IBaseSrvice, BaseService>(); 
-builder.Services.AddHttpClient<AIModelService>();
+builder.Services.AddHttpClient<BloodPressurePredictionService>();
 builder.Services.AddMemoryCache();
-//builder.Services.AddMemoryCache(options =>
-//{
-//    options.SizeLimit = 512 * 1024 * 1024; // 512 limit
-//});
-
 
 #region Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => 
