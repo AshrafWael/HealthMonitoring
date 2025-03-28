@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.BLL.Dtos.AIModelDtos
 {
-    public class DataPointDto
+    public class DataSetDto
     {
         public string UserId { get; set; }
         public List<double> PPG { get; set; }
