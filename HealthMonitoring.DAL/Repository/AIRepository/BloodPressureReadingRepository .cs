@@ -17,7 +17,7 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
         {
         }
 
-        public async Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count = 10)
+        public async Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count)
         {
             return await _dbcontext.bloodPressureReadings
                 .Where(r => r.UserId == userId)
@@ -25,7 +25,6 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
                 .Take(count)
                 .ToListAsync();
         }
-
         public async Task<BloodPressureReading> GetLatestByUserIdAsync(string userId)
         {
             return await _dbcontext.bloodPressureReadings
