@@ -26,7 +26,7 @@ namespace HealthMonitoring.DAL.Data.DbHelper
         public DbSet<MedicalNews> MedicalNewsDatas { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
-        public DbSet<SensorDataPoint>  sensorDataPoints { get; set; }
+        public DbSet<SensorDataSet>  sensorDataSets { get; set; }
         public DbSet<BloodPressureReading>  bloodPressureReadings { get; set; }
 
 
@@ -41,25 +41,6 @@ namespace HealthMonitoring.DAL.Data.DbHelper
             modelBuilder.ApplyConfiguration(new MedicalNewsEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new NotificationsEntityTypeConfigration());
 
-/*
-            modelBuilder.Entity<SensorDataPoint>()
-       .Property(e => e.ECG)
-       .HasConversion(
-           v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-           v => JsonSerializer.Deserialize<List<double>>(v, new JsonSerializerOptions()));
-
-            modelBuilder.Entity<SensorDataPoint>()
-                .Property(e => e.PPG)
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-                    v => JsonSerializer.Deserialize<List<double>>(v, new JsonSerializerOptions()));
-
-            modelBuilder.Entity<SensorDataPoint>()
-               .Property(e => e.ABP)
-               .HasConversion(
-                   v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-                   v => JsonSerializer.Deserialize<List<double>>(v, new JsonSerializerOptions()));
-*/
             base.OnModelCreating(modelBuilder);
 
         }
