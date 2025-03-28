@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.DAL.Data.Models.AIModels
 {
-    public class SensorDataPoint
+    public class SensorDataSet
     {
         [Key]
         public int Id { get; set; }
