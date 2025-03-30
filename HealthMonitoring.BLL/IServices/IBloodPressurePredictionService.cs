@@ -7,7 +7,7 @@ using HealthMonitoring.DAL.Data.Models.AIModels;
 
 namespace HealthMonitoring.BLL.IServices
 {
-    public interface IAIModelService
+    public interface IBloodPressurePredictionService
     {
         public  Task<BloodPressurePrediction> PredictBloodPressure(string userid);
 

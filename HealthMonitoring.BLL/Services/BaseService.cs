@@ -32,15 +32,15 @@ namespace HealthMonitoring.BLL.Services
                     try
                     {
 
-                            var Client = _httpClient.CreateClient("HealthMonitoring.API");
+                        var Client = _httpClient.CreateClient("HealthMonitoring.API");
                         HttpRequestMessage message = new HttpRequestMessage();
                         //heder type 
                         message.Headers.Add("Accept", "application/json");
                         message.RequestUri = new Uri(apirequest.ApiUrl);
                         if (apirequest.Data != null)
                         {
-                            message.Content = new StringContent(JsonConvert.SerializeObject(apirequest.Data)
-                                , Encoding.UTF8, "application/json");
+                    string requestJson = JsonConvert.SerializeObject(apirequest.Data);
+                    message.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
                         }
                         switch (apirequest.ApiType)
                         {
@@ -59,9 +59,6 @@ namespace HealthMonitoring.BLL.Services
                         }
                         HttpResponseMessage apiResponse = null;
                         //call our client
-                        // Send request with cancellation support
-                        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // Add timeout
-
                         apiResponse = await Client.SendAsync(message);
                         var apicontent = await apiResponse.Content.ReadAsStringAsync();
                         try
@@ -104,9 +101,9 @@ namespace HealthMonitoring.BLL.Services
 
                     }
                 }
-        
-        
-             
+
+
+
 
     }
 }

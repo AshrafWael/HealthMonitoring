@@ -13,13 +13,12 @@ namespace HealthMonitoring.BLL.IServices
     {
        
 
-        Task<int> ImportBulkSensorDataAsync(DataPointDto data, string userId);
+        Task<int> ImportBulkSensorDataAsync(DataSetDto data, string userId);
         Task<int> ImportBulkSensorDataFromJsonFileAsync(string jsonFilePath, string userId);
-        Task<bool> CacheDatasetAsync(DataPointDto data, string cacheKey);
-        Task<DataPointDto> GetCachedDatasetAsync(string cacheKey);
-
-        Task<List<DataPointDto>> GetDataSetByUser( string userId);
-        public  Task<List<DataPointDto>> GetDataSetByUserChunked(string userId, int chunkSize = 250);
+        Task<bool> CacheDatasetAsync(DataSetDto data, string cacheKey);
+        Task<DataSetDto> GetCachedDatasetAsync(string cacheKey);
+        Task<List<DataSetDto>> GetDataSetByUser( string userId);
+        Task<List<DataSetDto>> GetDataSetByUserChunked(string userId, int chunkSize = 250);
 
     }
 }
