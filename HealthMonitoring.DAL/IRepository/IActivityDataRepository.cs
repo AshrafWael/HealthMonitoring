@@ -9,6 +9,7 @@ namespace HealthMonitoring.DAL.IRepository
 {
     public interface IActivityDataRepository :IBaseRepository<ActivityData>
     {
+        public Task GetByUserIdAsync(string userid);
 
     }
 }
