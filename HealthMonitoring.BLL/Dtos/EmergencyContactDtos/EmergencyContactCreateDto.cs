@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.BLL.Dtos.EmergencyContactDtos
 {
-    internal class EmergencyContactCreateDto
+    public class EmergencyContactCreateDto
     {
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string UserId { get; set; }
     }
 }
