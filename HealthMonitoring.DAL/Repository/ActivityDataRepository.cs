@@ -13,11 +13,19 @@ namespace HealthMonitoring.DAL.Repository
     public class ActivityDataRepository : BaseRepository<ActivityData> ,IActivityDataRepository
     {
         private readonly HealthMonitoringContext _dbcontext;
-          
-        public ActivityDataRepository(HealthMonitoringContext dbcontext) :base(dbcontext) 
+
+        public ActivityDataRepository(HealthMonitoringContext dbcontext) : base(dbcontext)
+        { 
+        }
+            public async Task GetByUserIdAsync(string userid)
         {
-           
-           
+
+
+
+            await _dbcontext.ActivityDatas
+                .Where(a => a.UserId == userid)
+                .ToListAsync();
+
         }
     }
 }

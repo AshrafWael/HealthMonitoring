@@ -31,7 +31,10 @@ namespace HealthMonitoring.DAL.Repository
             }
             return await query.ToListAsync(); 
         }
-        public async Task<T> GetByIdAsync(int id)=> await _dbset.FindAsync(id);
+        public async Task<T> GetByIdAsync(int id) { 
+            
+           return await _dbset.FindAsync(id)!; 
+        }
         public async Task<T> FindAsync(Expression<Func<T, bool>> criteria,string[] includs= null)
         {
             IQueryable<T> query = _dbset;
@@ -45,9 +48,6 @@ namespace HealthMonitoring.DAL.Repository
             }
                 return await query.SingleOrDefaultAsync(criteria);
         }
-
-    
-
         public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> criteria, int? take, int? skip,
             string[] includs=null,Expression<Func<T, object>>ordereby=null,string orderbydirection=OrderBy.Ascending)
         {
@@ -77,7 +77,6 @@ namespace HealthMonitoring.DAL.Repository
             return await query.ToListAsync();
 
         }
-
         public async Task CreateAsync(T entity)
         {
             await _dbset.AddAsync(entity);
@@ -86,17 +85,14 @@ namespace HealthMonitoring.DAL.Repository
         {
             await _dbset.AddRangeAsync(entity);
         }
-      
         public async Task RemoveAsync(T entity)
         {
             _dbset.Remove(entity);
         }
-
         public async Task<T> UpdateAsync(T entity)
         {
               _dbset.Update(entity);
-            return entity;
-            
+               return entity; 
         }
     }
 }
