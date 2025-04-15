@@ -13,9 +13,9 @@ namespace HealthMonitoring.DAL.Data.Models
         [Key]
         public int NotificationId { get; set; }
         public string Message { get; set; }
-        public string NotificationType { get; set; } // e.g., Water Reminder
+        public string NotificationType { get; set; } 
         public DateTime SentAt { get; set; }
-        public bool IsRead { get; set; } // Whether the notification has been read
+        public bool IsRead { get; set; } 
         public string Type { get; set; }
 
         [ForeignKey("User")]
