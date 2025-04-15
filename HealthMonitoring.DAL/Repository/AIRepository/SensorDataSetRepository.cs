@@ -17,13 +17,13 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
         {
         }
         // get spefic amount of data set by user id 
-        public async Task<List<SensorDataSet>> GetByUserIdAsync(string userId, int count,int skip  = 0 )
+        public async Task<List<SensorDataSet>> GetByUserIdAsync(string userId, int count,int skip =0 )
         {
             return await _dbcontext.sensorDataSets
                 .AsNoTracking()
                 .Where(d => d.UserId == userId)
                 .OrderByDescending(d => d.Timestamp) 
-                .Skip(skip)
+                .Skip(skip *count)
                 .Take(count)
                 .ToListAsync();
         }
