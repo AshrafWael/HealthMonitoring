@@ -8,6 +8,7 @@ namespace HealthMonitoring.BLL.Dtos.ActivityDataDtos
 {
     public class ActivityDataReadDto
     {
+        public int Id { get; set; }
         public DateTime RecordedAt { get; set; }
         public string ActivityType { get; set; } //Running, Sleeping ,Waking
         public float Duration { get; set; }  //in Hours
