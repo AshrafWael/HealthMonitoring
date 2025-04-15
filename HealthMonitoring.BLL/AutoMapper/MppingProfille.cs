@@ -8,6 +8,7 @@ using HealthMonitoring.BLL.Dtos.AccountUserDtos;
 using HealthMonitoring.BLL.Dtos.ActivityDataDtos;
 using HealthMonitoring.BLL.Dtos.AIModelDtos;
 using HealthMonitoring.BLL.Dtos.ApplicationUserDtos;
+using HealthMonitoring.BLL.Dtos.EmergencyContactDtos;
 using HealthMonitoring.DAL.Data.Models;
 using HealthMonitoring.DAL.Data.Models.AIModels;
 using Microsoft.AspNetCore.Identity.Data;
@@ -43,7 +44,9 @@ namespace HealthMonitoring.BLL.AutoMapper
             .ForMember(dest => dest.ECG, opt => opt.MapFrom(src => new List<double> { src.ECG }))
             .ReverseMap();
 
-
+            CreateMap<EmergencyContact, EmergencyContactReadDto>().ReverseMap();
+            CreateMap<EmergencyContactCreateDto, EmergencyContact>().ReverseMap();
+            CreateMap<EmergencyContactUpdateDto, EmergencyContact>().ReverseMap();
 
 
         }
