@@ -18,7 +18,7 @@ namespace HealthMonitoring.BLL.Dtos.MailingDto
         [Required]
 
         public string Body { get; set; }
-        public  IList<IFormFile> attachments { get; set; }
+        public  IList<IFormFile>? attachments { get; set; }
 
     }
 }
