@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HealthMonitoring.DAL.Data.DbHelper;
-using HealthMonitoring.DAL.Data.Models;
+using HealthMonitoring.DAL.Data.Models.AIModels;
 using HealthMonitoring.DAL.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,7 +33,6 @@ namespace HealthMonitoring.DAL.Repository
         public async Task<HeartRateData> GetLatestHeartRateAsync(string userId)
         {
             IQueryable<HeartRateData> query = _dbset;
-
             return await query.Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.RecordedAt)
                 .FirstOrDefaultAsync();
