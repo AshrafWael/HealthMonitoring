@@ -27,6 +27,22 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
                 .Take(count)
                 .ToListAsync();
         }
+        public async Task<List<ECGReading>> GetECGByUserIdAsync(string userId, int count, int skip = 0)
+        {
+            return await _dbcontext.sensorDataSets
+                .AsNoTracking()
+                .Where(d => d.UserId == userId)
+                .OrderByDescending(d => d.Timestamp)
+                .Skip(skip * count)
+                .Take(count)
+                 .Select(d => new ECGReading
+                 {
+                     ECG = d.ECG,
+                     UserId = d.UserId,
+                     Timestamp = d.Timestamp
+                 })// Only select ECG value
+                .ToListAsync();
+        }
         //Get All data set by user id
         public async Task<List<SensorDataSet>> GetSensordataByUserIdAsync(string userId)
         {
@@ -67,6 +83,7 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
         {
             await _dbset.AddRangeAsync(sensorDatas);
         }
+
 
     }
 }
