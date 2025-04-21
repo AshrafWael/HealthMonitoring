@@ -13,7 +13,6 @@ namespace HealthMonitoring.DAL.UnitOfWork
     {
         //Refrance for all repos 
         IActivityDataRepository ActivityDatas { get; }
-        INotificationRepository NotificationDatas { get; }
         IHeartRateDataRepository HeartRateDatas { get; }
         IBloodPressureReadingRepository bloodPressureReading {  get; }
         ISensorDataSetRepository sensorDataSet {  get; }
