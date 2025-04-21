@@ -10,8 +10,10 @@ namespace HealthMonitoring.DAL.IRepository.IAIRepository
     public interface ISensorDataSetRepository :IBaseRepository<SensorDataSet>
     {
          Task<List<SensorDataSet>> GetByUserIdAsync(string userId,int count, int skip =0);
+         Task<List<ECGReading>> GetECGByUserIdAsync(string userId, int count, int skip = 0);
          Task<List<SensorDataSet>> GetByUserIdBatchedAsync(string userId, int batchSize, int totalNeeded);
         Task AddrangeAsync(List<SensorDataSet> sensorDatas);
+
 
     }
 }
