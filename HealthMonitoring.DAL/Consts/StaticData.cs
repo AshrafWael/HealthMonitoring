@@ -18,6 +18,13 @@ namespace HealthMonitoring.DAL.Consts
             HypertensionStage2,
             HypertensiveCrisis
         }
+        public enum HeartRateCategory
+        {
+            Low,
+            Normal,
+            High,
+       
+        }
     }
 }
 
