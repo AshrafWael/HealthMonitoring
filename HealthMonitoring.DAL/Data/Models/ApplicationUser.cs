@@ -27,8 +27,6 @@ namespace HealthMonitoring.DAL.Data.Models
         public ICollection<ActivityData> activityDatas { get; set; }
         public ICollection<HealthInformation> HealthInformation { get; set; }
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }
-        public ICollection<HealthSuggestion> HealthSuggestions { get; set; }   
-        public ICollection<Notification> Notifications  { get; set; }
         public ICollection<BloodPressureReading> bloodPressureReadings { get; set; }
     }
 }

@@ -20,11 +20,8 @@ namespace HealthMonitoring.DAL.Data.DbHelper
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ActivityData> ActivityDatas { get; set; }
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
-        public DbSet<HealthSuggestion> HealthSuggestions { get; set; }
         public DbSet<HeartRateData> HeartRateDatas { get; set; }
         public DbSet<HealthInformation> HealthInformations { get; set; }
-        public DbSet<MedicalNews> MedicalNewsDatas { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
 
         public DbSet<SensorDataSet>  sensorDataSets { get; set; }
         public DbSet<BloodPressureReading>  bloodPressureReadings { get; set; }
@@ -36,10 +33,7 @@ namespace HealthMonitoring.DAL.Data.DbHelper
             modelBuilder.ApplyConfiguration(new ActivityDataEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new EmergencyContactEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new HealthInformationEntityTypeConfigration());
-            modelBuilder.ApplyConfiguration(new HealthSuggestionsEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new HeartRateDataEntityTypeConfigration());
-            modelBuilder.ApplyConfiguration(new MedicalNewsEntityTypeConfigration());
-            modelBuilder.ApplyConfiguration(new NotificationsEntityTypeConfigration());
 
             base.OnModelCreating(modelBuilder);
 
