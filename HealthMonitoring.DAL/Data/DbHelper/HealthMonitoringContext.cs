@@ -21,10 +21,9 @@ namespace HealthMonitoring.DAL.Data.DbHelper
         public DbSet<ActivityData> ActivityDatas { get; set; }
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
         public DbSet<HeartRateData> HeartRateDatas { get; set; }
+        public DbSet<BloodPressureReading>  bloodPressureReadings { get; set; } 
         public DbSet<HealthInformation> HealthInformations { get; set; }
-
         public DbSet<SensorDataSet>  sensorDataSets { get; set; }
-        public DbSet<BloodPressureReading>  bloodPressureReadings { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
