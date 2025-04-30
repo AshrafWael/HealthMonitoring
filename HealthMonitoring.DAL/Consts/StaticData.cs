@@ -22,8 +22,15 @@ namespace HealthMonitoring.DAL.Consts
         {
             Low,
             Normal,
-            High,
-       
+            High, 
+        }
+        public enum HeartDiseaseCategory
+        {
+            Normal,
+            Supraventricular_premature,
+            Premature_ventricular_contraction,
+            Fusion_of_ventricular_and_normal,
+            Unclassifiable
         }
     }
 }
