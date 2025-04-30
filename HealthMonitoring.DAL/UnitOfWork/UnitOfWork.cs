@@ -19,9 +19,9 @@ namespace HealthMonitoring.DAL.UnitOfWork
        private readonly HealthMonitoringContext _dbcontext;
        public  IActivityDataRepository  ActivityDatas { get; private set; }
         public IHeartRateDataRepository HeartRateDatas { get; private set; }
+        public IHeartDiseaseRepository HeartDiseases { get; private set; }
         public IUserRepository Users { get; private set; }
        public IBaseRepository<EmergencyContact> EmergencyContacts { get; private set; }
-
         public IBloodPressureReadingRepository bloodPressureReading { get; private set; }
         public ISensorDataSetRepository sensorDataSet { get; private set; }
 
@@ -30,6 +30,7 @@ namespace HealthMonitoring.DAL.UnitOfWork
             _dbcontext = dbcontext;
             ActivityDatas = new ActivityDataRepository(_dbcontext);
             HeartRateDatas = new HeartRateDataRepository(_dbcontext);
+            HeartDiseases = new HeartDiseaseRepository(_dbcontext);
             EmergencyContacts = new BaseRepository<EmergencyContact>(_dbcontext);
             bloodPressureReading = new BloodPressureReadingRepository(_dbcontext);
             sensorDataSet = new SensorDataSetRepository(_dbcontext);
