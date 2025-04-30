@@ -4,6 +4,7 @@ using HealthMonitoring.DAL.Data.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthMonitoring.DAL.Migrations
 {
     [DbContext(typeof(HealthMonitoringContext))]
-    partial class HealthMonitoringContextModelSnapshot : ModelSnapshot
+    [Migration("20250420141156_updatedatabase")]
+    partial class updatedatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,7 +286,7 @@ namespace HealthMonitoring.DAL.Migrations
                     b.ToTable("EmergencyContacts");
                 });
 
-            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.HeartDisease", b =>
+            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.HealthInformation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -291,12 +294,21 @@ namespace HealthMonitoring.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Allergies")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChronicDiseases")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Diseases")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RecordedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Medications")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -306,7 +318,7 @@ namespace HealthMonitoring.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("HeartDiseases");
+                    b.ToTable("HealthInformations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -497,7 +509,7 @@ namespace HealthMonitoring.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.HeartDisease", b =>
+            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.HealthInformation", b =>
                 {
                     b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", "User")
                         .WithMany("HealthInformation")
