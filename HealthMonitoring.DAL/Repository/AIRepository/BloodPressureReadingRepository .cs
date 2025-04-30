@@ -17,7 +17,7 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
         {
         }
 
-        public async Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count)
+        public async Task<List<BloodPressureReading>> GetRecentBloodPressureByUserIdAsync(string userId, int count)
         {
             return await _dbcontext.bloodPressureReadings
                 .Where(r => r.UserId == userId)
@@ -25,12 +25,21 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
                 .Take(count)
                 .ToListAsync();
         }
-        public async Task<BloodPressureReading> GetLatestByUserIdAsync(string userId)
+        public async Task<BloodPressureReading> GetLatestBloodPressureByUserIdAsync(string userId)
         {
             return await _dbcontext.bloodPressureReadings
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.Timestamp)
                 .FirstOrDefaultAsync();
+        }
+        public async Task<IEnumerable<BloodPressureReading>> GetBloodPressureByDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
+        {
+            IQueryable<BloodPressureReading> query = _dbset;
+            return await query.Where(h => h.UserId == userId &&
+                           h.Timestamp >= startDate &&
+                           h.Timestamp <= endDate)
+                            .OrderBy(h => h.Timestamp)
+                            .ToListAsync();
         }
     }
 }
