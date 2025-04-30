@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace HealthMonitoring.DAL.Data.Models
 {
-    public class HealthInformation
+    public class HeartDisease
     {
         // Health information
         [Key]

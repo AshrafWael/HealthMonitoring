@@ -25,7 +25,7 @@ namespace HealthMonitoring.DAL.Data.Models
         //Navigation Proprty
         public ICollection<EmergencyContact> EmergencyContacts { get; set; }
         public ICollection<ActivityData> activityDatas { get; set; }
-        public ICollection<HealthInformation> HealthInformation { get; set; }
+        public ICollection<HeartDisease> HealthInformation { get; set; }
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }
         public ICollection<BloodPressureReading> bloodPressureReadings { get; set; }
     }
