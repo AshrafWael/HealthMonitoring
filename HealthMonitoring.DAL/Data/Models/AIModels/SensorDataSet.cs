@@ -16,8 +16,6 @@ namespace HealthMonitoring.DAL.Data.Models.AIModels
         public double  ABP { get; set; }
         public double  PPG { get; set; }
         public DateTime Timestamp { get; set; }
-
-
         [ForeignKey("User")]
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
