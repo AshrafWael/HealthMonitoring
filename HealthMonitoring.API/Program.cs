@@ -20,6 +20,8 @@ using HealthMonitoring.BLL.StaticData;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
+using HealthMonitoring.API.Swagger;
+using Twilio.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,11 +45,14 @@ builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<IBloodPressurePredictionService, BloodPressurePredictionService>();
 builder.Services.AddHttpClient<IBloodPressurePredictionService, BloodPressurePredictionService>();
+builder.Services.AddHttpClient<BloodPressurePredictionService>();
+builder.Services.AddScoped<IHeartBeatService, HeartBeatService>();
+builder.Services.AddScoped<IHeartDiseaseService, HeartDiseaseService>();
+builder.Services.AddScoped<IEmergencyContactService, EmergencyContactService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IBaseSrvice, BaseService>(); 
-builder.Services.AddHttpClient<BloodPressurePredictionService>();
-builder.Services.AddScoped<IEmergencyContactService, EmergencyContactService>();
 builder.Services.AddScoped<ISMSService, SMSService>();
+
 
 builder.Services.AddMemoryCache();
 
@@ -126,6 +131,7 @@ builder.Services.AddSwaggerGen(c =>
 
     });
     c.UseInlineDefinitionsForEnums();
+    c.DocumentFilter<CustomSwaggerOrder>();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
