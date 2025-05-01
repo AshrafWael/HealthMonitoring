@@ -9,8 +9,9 @@ namespace HealthMonitoring.DAL.IRepository.IAIRepository
 {
     public interface IBloodPressureReadingRepository :IBaseRepository<BloodPressureReading>
     {
-        Task<List<BloodPressureReading>> GetRecentByUserIdAsync(string userId, int count);
-        Task<BloodPressureReading> GetLatestByUserIdAsync(string userId);
+        Task<List<BloodPressureReading>> GetRecentBloodPressureByUserIdAsync(string userId);
+        Task<BloodPressureReading> GetLatestBloodPressureByUserIdAsync(string userId);
+        public Task<IEnumerable<BloodPressureReading>> GetBloodPressureByDateRangeAsync(string userId, DateTime startDate, DateTime endDate);
 
     }
 }
