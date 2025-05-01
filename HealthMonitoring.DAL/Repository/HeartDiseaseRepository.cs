@@ -15,28 +15,24 @@ namespace HealthMonitoring.DAL.Repository
     {
         public HeartDiseaseRepository(HealthMonitoringContext dbcontext) : base(dbcontext)
         {}
-             public async Task<IEnumerable<HeartDisease>> GetUserHeartRateDataAsync(string userId)
+        public async Task<IEnumerable<HeartDisease>> GetUserHeartDiseaseDataAsync(string userId)
         { 
 
-            IQueryable<HeartDisease> query = _dbset;
-
-            return await query.Where(h => h.UserId == userId)
+               IQueryable<HeartDisease> query = _dbset;
+                return await query.Where(h => h.UserId == userId)
                    .OrderByDescending(h => h.RecordedAt)
-                   .ToListAsync();
+                    .ToListAsync();
         }
-
-        public async Task<HeartDisease> GetLatestHeartRateAsync(string userId)
+        public async Task<HeartDisease> GetLatestHeartDiseaseAsync(string userId)
         {
             IQueryable<HeartDisease> query = _dbset;
             return await query.Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.RecordedAt)
                 .FirstOrDefaultAsync();
         }
-
-        public async Task<IEnumerable<HeartDisease>> GetHeartRatesByDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<HeartDisease>> GetHeartDiseaseByDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
         {
             IQueryable<HeartDisease> query = _dbset;
-
             return await query.Where(h => h.UserId == userId &&
                            h.RecordedAt >= startDate &&
                            h.RecordedAt <= endDate)

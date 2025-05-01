@@ -10,8 +10,8 @@ namespace HealthMonitoring.DAL.IRepository.IAIRepository
 {
     public interface IHeartDiseaseRepository : IBaseRepository<HeartDisease>
     {
-        Task<IEnumerable<HeartDisease>> GetUserHeartRateDataAsync(string userId);
-        Task<HeartDisease> GetLatestHeartRateAsync(string userId);
-        Task<IEnumerable<HeartDisease>> GetHeartRatesByDateRangeAsync(string userId, DateTime startDate, DateTime endDate);
+        Task<IEnumerable<HeartDisease>> GetUserHeartDiseaseDataAsync(string userId);
+        Task<HeartDisease> GetLatestHeartDiseaseAsync(string userId);
+        Task<IEnumerable<HeartDisease>> GetHeartDiseaseByDateRangeAsync(string userId, DateTime startDate, DateTime endDate);
     }
 }

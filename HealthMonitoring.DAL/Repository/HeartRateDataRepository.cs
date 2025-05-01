@@ -13,23 +13,15 @@ namespace HealthMonitoring.DAL.Repository
     public class HeartRateDataRepository :BaseRepository<HeartRateData> ,IHeartRateDataRepository
     {
 
-        private readonly HealthMonitoringContext _context;
-    //    internal readonly DbSet<HeartRateData> _dbset;
         public HeartRateDataRepository(HealthMonitoringContext dbcontext) : base(dbcontext)
-        {
-            
-
-        }
+        { }
         public async Task<IEnumerable<HeartRateData>> GetUserHeartRateDataAsync(string userId)
         {
-
             IQueryable<HeartRateData> query = _dbset;
-
-         return await  query.Where(h => h.UserId == userId)
+             return await  query.Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.RecordedAt)
                 .ToListAsync();
         }
-
         public async Task<HeartRateData> GetLatestHeartRateAsync(string userId)
         {
             IQueryable<HeartRateData> query = _dbset;
@@ -41,7 +33,6 @@ namespace HealthMonitoring.DAL.Repository
         public async Task<IEnumerable<HeartRateData>> GetHeartRatesByDateRangeAsync(string userId, DateTime startDate, DateTime endDate)
         {
             IQueryable<HeartRateData> query = _dbset;
-
             return await query .Where(h => h.UserId == userId &&
                            h.RecordedAt >= startDate &&
                            h.RecordedAt <= endDate)
