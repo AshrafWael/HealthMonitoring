@@ -17,12 +17,11 @@ namespace HealthMonitoring.DAL.Repository.AIRepository
         {
         }
 
-        public async Task<List<BloodPressureReading>> GetRecentBloodPressureByUserIdAsync(string userId, int count)
+        public async Task<List<BloodPressureReading>> GetRecentBloodPressureByUserIdAsync(string userId)
         {
             return await _dbcontext.bloodPressureReadings
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.Timestamp)
-                .Take(count)
                 .ToListAsync();
         }
         public async Task<BloodPressureReading> GetLatestBloodPressureByUserIdAsync(string userId)
