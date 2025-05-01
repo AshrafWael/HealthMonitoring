@@ -14,18 +14,16 @@ namespace HealthMonitoring.DAL.Configrations
 
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.HasMany(u=> u.activityDatas)
-                   .WithOne(h=> h.User)
-                   .HasForeignKey(ad => ad.UserId);
 
             builder.HasMany(u => u.EmergencyContacts)
                   .WithOne(h => h.User)
                   .HasForeignKey(EC => EC.UserId);
 
-            builder.HasMany(u => u.HealthSuggestions)
-                  .WithOne(h => h.User)
-                  .HasForeignKey(hs => hs.UserId);
+            builder.HasMany(u=> u.activityDatas)
+                   .WithOne(h=> h.User)
+                   .HasForeignKey(ad => ad.UserId);
 
+      
             builder.HasMany(u => u.HealthInformation)
                   .WithOne(h => h.User)
                   .HasForeignKey(hi => hi.UserId);
@@ -34,9 +32,6 @@ namespace HealthMonitoring.DAL.Configrations
                   .WithOne(h => h.User)
                   .HasForeignKey(hr => hr.UserId);
 
-            builder.HasMany(u => u.Notifications)
-                  .WithOne(h => h.User)
-                  .HasForeignKey(n => n.UserId);
 
             builder.Property(u => u.FirstName)
                   

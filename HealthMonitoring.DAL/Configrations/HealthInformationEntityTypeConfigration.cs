@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HealthMonitoring.DAL.Configrations
 {
-    public class HealthInformationEntityTypeConfigration : IEntityTypeConfiguration<HealthInformation>
+    public class HealthInformationEntityTypeConfigration : IEntityTypeConfiguration<HeartDisease>
     {
-        public void Configure(EntityTypeBuilder<HealthInformation> builder)
+        public void Configure(EntityTypeBuilder<HeartDisease> builder)
         {
             builder.Property(u => u.Diseases)
                             .IsRequired();

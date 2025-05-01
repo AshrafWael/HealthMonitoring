@@ -20,9 +20,6 @@ namespace HealthMonitoring.DAL.Configrations
                    .WithMany(H => H.EmergencyContacts)
                    .HasForeignKey(u => u.UserId);
 
-            builder.HasMany(u => u.notifications)
-                   .WithOne(h => h.Contact)
-                   .HasForeignKey(n => n.ContactId);
         }
     }
 }
