@@ -10,10 +10,10 @@ namespace HealthMonitoring.BLL.IServices
     public interface IActivityDataServices
     {
        Task< IEnumerable<ActivityDataReadDto>> GetAll();
-        Task<ActivityDataReadDto> GetById(int id);
-        Task  Add(ActivityDataCreateDto activitycreatdto);
-        Task Update(ActivityDataUpdateDto activityupdatedto);
-        Task Delete(int Id);
+        Task Add(ActivityDataCreateDto activitycreatdto);
+        Task<ActivityDataUpdateDto> Update(ActivityDataUpdateDto activityupdatedto,int id);
+        Task<List<ActivityDataReadDto>>  GetByUserId(string userid);
+        Task Delete(int userid);
        
     }
 }

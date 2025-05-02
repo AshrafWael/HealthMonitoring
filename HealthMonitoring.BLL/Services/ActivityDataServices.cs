@@ -44,13 +44,8 @@ namespace HealthMonitoring.BLL.Services
                 _logger.LogError(ex, "Error occurred while adding new activity");
                 throw new ApplicationException("Error adding new activity", ex);
             }
+           
         }
-
-        public Task Delete(int Id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task <IEnumerable<ActivityDataReadDto>> GetAll()
         {
             try
@@ -66,16 +61,53 @@ namespace HealthMonitoring.BLL.Services
             }
         }
 
-        public async Task<ActivityDataReadDto> GetById(int id)
+        public async Task<List<ActivityDataReadDto>> GetByUserId(string userid)
         {
-            throw new NotImplementedException();
+            if (userid !=  null)
+            {
+                var activity = await _unitOfWork.ActivityDatas.FindAllAsync(a => a.UserId == userid,null,null);
+                if (activity == null)
+                {
+                    throw new KeyNotFoundException($"No activity found for user {userid}");
+                }
+                var mappedactivity = _mapper.Map<List<ActivityDataReadDto>>(activity);
+                return mappedactivity;
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(userid), "User ID cannot be null");
+            }
         }
 
- 
-
-        public Task Update(ActivityDataUpdateDto activityupdatedto)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            var activity = await _unitOfWork.ActivityDatas.FindAsync(a => a.Id == id);
+            if (activity == null)
+            {
+                throw new KeyNotFoundException($"No activity found for user {id}");
+            }else
+            {
+              await  _unitOfWork.ActivityDatas.RemoveAsync(activity);
+                _unitOfWork.SaveChanges();
+                _logger.LogInformation("Deleted activity for user {UserId}", id);
+            }
+        }
+
+        public async Task<ActivityDataUpdateDto> Update(ActivityDataUpdateDto activityupdatedto,int id)
+        {
+            var activity = await _unitOfWork.ActivityDatas.FindAsync(a => a.Id == id);
+            if (activity == null)
+            {
+                throw new KeyNotFoundException($"No activity found with ID {id}");
+            }
+            else
+            {
+                var mappedactvity =_mapper.Map<ActivityDataUpdateDto,ActivityData >(activityupdatedto, activity);
+               await _unitOfWork.ActivityDatas.UpdateAsync(activity);
+                _unitOfWork.SaveChanges();
+                _logger.LogInformation("Updated activity for user {UserId}", activityupdatedto.UserId);
+            }
+            return activityupdatedto;
         }
     }
 }
