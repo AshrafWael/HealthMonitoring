@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using HealthMonitoring.BLL.Dtos.AIModelDtos;
+using HealthMonitoring.BLL.Dtos.HealthInformationDtos;
+using HealthMonitoring.BLL.Dtos.HeartRateDataDtos;
 using HealthMonitoring.BLL.IServices;
 using HealthMonitoring.DAL.Data.Models;
 using HealthMonitoring.DAL.Data.Models.AIModels;
@@ -13,6 +15,7 @@ using HealthMonitoring.DAL.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static HealthMonitoring.DAL.Consts.StaticData;
 
 namespace HealthMonitoring.BLL.Services
@@ -171,7 +174,7 @@ namespace HealthMonitoring.BLL.Services
                 _cache.Remove(key);
             }
         }
-        public async  Task<List<DataSetDto>> GetDataSetByUser(string userId)
+        public async  Task<List<DataSetDto>> GetDataSetByUser(string userId, int batchNumber )
         {
             string cacheKey = $"user_{userId}_dataset";
             // Check if data is in cache
@@ -181,13 +184,58 @@ namespace HealthMonitoring.BLL.Services
                 return cachedData;
             }
             _logger.LogInformation($"Fetching data for user: {userId}");
-            var data = await _unitOfWork.sensorDataSet.GetByUserIdAsync(userId, 1250);
-            var datasetDto = _mapper.Map<List<DataSetDto>>(data);
+                  var data = await _unitOfWork.sensorDataSet.GetByUserIdAsync(userId, 1250, batchNumber);      
+                var datasetDto = _mapper.Map<List<DataSetDto>>(data);       
+                  return datasetDto;
+
+            /*
             // Cache data with a sliding expiration
             //var cacheOptions = new MemoryCacheEntryOptions()
             //    .SetSlidingExpiration(TimeSpan.FromMinutes(10)).SetSize(1);
             //_cache.Set(cacheKey, datasetDto, cacheOptions);
+            */
 
+        }
+        public async Task<List<HeartRateRequstDto>> GetecgDataSetByUser(string userId, int batchNumber)
+        {
+            string cacheKey = $"user_{userId}_dataset";
+            // Check if data is in cache
+            if (_cache.TryGetValue(cacheKey, out List<HeartRateRequstDto> cachedData))
+            {
+                _logger.LogInformation($"Cache hit for user data: {userId}");
+                return cachedData;
+            }
+            _logger.LogInformation($"Fetching data for user: {userId}");
+
+            var data = await _unitOfWork.sensorDataSet.GetECGByUserIdAsync(userId, 1250, batchNumber);
+            var datasetDto = _mapper.Map<List<HeartRateRequstDto>>(data);
+            /*
+           // Cache data with a sliding expiration
+           //var cacheOptions = new MemoryCacheEntryOptions()
+           //    .SetSlidingExpiration(TimeSpan.FromMinutes(10)).SetSize(1);
+           //_cache.Set(cacheKey, datasetDto, cacheOptions);
+           */
+            return datasetDto;
+        }
+        public async Task<List<HeartDiseaseRequstDto>> GetecgDataSetByUserAsync(string userId, int batchNumber)
+        {
+            string cacheKey = $"user_{userId}_dataset";
+            // Check if data is in cache
+            if (_cache.TryGetValue(cacheKey, out List<HeartDiseaseRequstDto> cachedData))
+            {
+                _logger.LogInformation($"Cache hit for user data: {userId}");
+                return cachedData;
+            }
+            _logger.LogInformation($"Fetching data for user: {userId}");
+
+            var data = await _unitOfWork.sensorDataSet.GetECGByUserIdAsync(userId, 187, batchNumber);
+            var datasetDto = _mapper.Map<List<HeartDiseaseRequstDto>>(data);
+            /*
+           // Cache data with a sliding expiration
+           //var cacheOptions = new MemoryCacheEntryOptions()
+           //    .SetSlidingExpiration(TimeSpan.FromMinutes(10)).SetSize(1);
+           //_cache.Set(cacheKey, datasetDto, cacheOptions);
+           */
             return datasetDto;
         }
         public async Task<List<DataSetDto>> GetDataSetByUserChunked(string userId, int chunkSize = 250)
@@ -225,6 +273,33 @@ namespace HealthMonitoring.BLL.Services
             _cache.Set(cacheKey, result, cacheOptions);
 
             return result;
+        }
+        public async Task<bool> DeleteDataSetByUserId(string userid)
+        {
+            var user = await _unitOfWork.Users.FindAsync(u => u.Id == userid);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with userid {userid} not found.");
+            }
+            var sensorData = await _unitOfWork.sensorDataSet.FindAllAsync(u => u.UserId == userid, null, null);
+            if (sensorData == null)
+            {
+                throw new KeyNotFoundException($"No sensor data found for user {userid}");
+            }
+            try
+            {
+                var mappedData = _mapper.Map<SensorDataSet>(sensorData);
+                // Delete the sensor data
+              await  _unitOfWork.sensorDataSet.RemoveAsync(mappedData);
+                 _unitOfWork.SaveChanges();
+                _logger.LogInformation("Deleted sensor data for user {UserId}", userid);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting sensor data for user {UserId}", userid);
+                return false;
+            }
         }
     }
 }
