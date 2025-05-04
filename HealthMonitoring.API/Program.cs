@@ -173,10 +173,7 @@ if (app.Environment.IsDevelopment() ||app.Environment.IsProduction())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthMonitoring_V1");
         options.SwaggerEndpoint("/swagger/v2/swagger.json", "HealthMonitoring_V2");
-   
-        // options.RoutePrefix = string.Empty; // for deploying "/"
-
-
+         options.RoutePrefix = string.Empty; // for deploying "/"
     });
 }
 
