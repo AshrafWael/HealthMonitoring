@@ -28,8 +28,36 @@ namespace HealthMonitoring.API.Controllers
             var   activitys = await _activityDataServices.GetAll();
             return Ok(activitys);
         }
+        [HttpGet("activity-data/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetActivityDataByUserId(string userId)
+        {
+            try
+            {
+                var result = await _activityDataServices.GetByUserId(userId);
+                if (result == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("Activity data not found.");
+                    return NotFound(_response);
+                }
+
+                _response.Result = result;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
+        }
         [HttpPost]
-        //  [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -58,6 +86,63 @@ namespace HealthMonitoring.API.Controllers
             }
             return _response;
 
+        }
+        [HttpPut("activity-data/update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> UpdateActivityData([FromBody] ActivityDataUpdateDto activityUpdateDto,int id)
+        {
+            try
+            {
+                if (activityUpdateDto == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.Errors.Add("Update data is null.");
+                    return BadRequest(_response);
+                }
+
+                var updated = await _activityDataServices.Update(activityUpdateDto,id);
+                _response.Result = updated;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
+        }
+        [HttpDelete("activity-data/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> DeleteActivityData(int Id)
+        {
+            try
+            {
+                await _activityDataServices.Delete(Id);
+                _response.Result = "Activity data deleted successfully.";
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (KeyNotFoundException)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Errors.Add("Activity data not found.");
+                return NotFound(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
     }
 }
