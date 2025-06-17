@@ -38,41 +38,38 @@ namespace HealthMonitoring.API.Controllers
         }
 
 
-        /*
-        [HttpPost]
-        //  [Authorize(Roles = "admin")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> AddDataSet([FromBody] DataPointDto dataPointDto, string UserId)
-        {
-            try
-            {
-                if (dataPointDto == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    _response.Result = dataPointDto;
-                    return BadRequest(_response);
-                }
-                await _sensorDataService.AddDatasetToUser(dataPointDto);
-                _response.IsSuccess = true;
-                _response.Result = dataPointDto;
-                _response.StatusCode = HttpStatusCode.Created;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.IsSuccess = false;
-                _response.Errors = new List<string> { ex.Message };
-            }
-            return _response;
+        
+        //[HttpPost]
+        ////  [Authorize(Roles = "admin")]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<ActionResult<APIResponse>> AddDataSet([FromBody] DataSetDto dataPointDto, string UserId)
+        //{
+        //    try
+        //    {
+        //        if (dataPointDto == null)
+        //        {
+        //            _response.StatusCode = HttpStatusCode.BadRequest;
+        //            _response.IsSuccess = false;
+        //            _response.Result = dataPointDto;
+        //            return BadRequest(_response);
+        //        }
+        //        await _sensorDataService.ImportBulkSensorDataAsync(dataPointDto,dataPointDto.UserId);
+        //        _response.IsSuccess = true;
+        //        _response.Result = dataPointDto;
+        //        _response.StatusCode = HttpStatusCode.Created;
+        //        return Ok(_response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.IsSuccess = false;
+        //        _response.Errors = new List<string> { ex.Message };
+        //    }
+        //    return _response;
 
-        }
-
-        */
-
+        //}
         [HttpPost("import")]
         public async Task<IActionResult> ImportSensorData([FromBody] DataSetDto data, [FromQuery] string userId)
         {
@@ -107,7 +104,6 @@ namespace HealthMonitoring.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while importing sensor data" });
             }
         }
-
         [HttpPost("import/file")]
         public async Task<IActionResult> ImportSensorDataFile(IFormFile file, [FromQuery] string userId)
         {
@@ -143,7 +139,6 @@ namespace HealthMonitoring.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while importing sensor data file" });
             }
         }
-
         [HttpGet("cached/{userId}")]
         public async Task<IActionResult> GetCachedDataset(string userId)
         {
@@ -177,7 +172,7 @@ namespace HealthMonitoring.API.Controllers
         [HttpGet("Get-ById")]
         public async Task<IActionResult> GetDatasetByUserId(string userid)
         {
-            var data = await _sensorDataService.GetDataSetByUser(userid);
+            var data = await _sensorDataService.GetDataSetByUser(userid,0);
             //   return Ok(data);
             if (data == null)
             {

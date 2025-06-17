@@ -13,13 +13,11 @@ namespace HealthMonitoring.DAL.Configrations
     {
         public void Configure(EntityTypeBuilder<EmergencyContact> builder)
         {
+
+            builder.HasMany(u => u.ApplicationUsers)
+                   .WithMany(H => H.EmergencyContacts);
             builder.Property(u => u.PhoneNumber)
                 .IsRequired();
-
-            builder.HasOne(u => u.User)
-                   .WithMany(H => H.EmergencyContacts)
-                   .HasForeignKey(u => u.UserId);
-
         }
     }
 }

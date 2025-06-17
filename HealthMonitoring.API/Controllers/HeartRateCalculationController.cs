@@ -1,67 +1,55 @@
-﻿using System.Net;
-using HealthMonitoring.API.ApiResponse;
+﻿using HealthMonitoring.API.ApiResponse;
 using HealthMonitoring.BLL.IServices;
-using HealthMonitoring.BLL.Services;
-using HealthMonitoring.DAL.Data.Models.AIModels;
 using HealthMonitoring.DAL.UnitOfWork;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static HealthMonitoring.DAL.Consts.StaticData;
 
 namespace HealthMonitoring.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BloodPressurePredictionController : ControllerBase
+    public class HeartRateCalculationController : ControllerBase
     {
-        private readonly ISensorDataService _sensorDataService;
         private readonly ILogger<SensorDataController> _logger;
-        private readonly IBloodPressurePredictionService _aIModelService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHeartBeatService _aIModelService;
         protected APIResponse _response;
-        public BloodPressurePredictionController(ISensorDataService sensorDataService, ILogger<SensorDataController> logger
-            , IBloodPressurePredictionService aIModelService, IUnitOfWork unitOfWork)
+        public HeartRateCalculationController( ILogger<SensorDataController> logger
+            , IHeartBeatService aIModelService)
         {
-            _sensorDataService = sensorDataService;
             _logger = logger;
             _aIModelService = aIModelService;
-            _unitOfWork = unitOfWork;
             _response = new();
         }
 
         [HttpPost("send-ai")]
-        public async Task<ActionResult<APIResponse>> SendDataToAIModel([FromQuery] string userId,int batchsize)
+        [ResponseCache(Duration = 60)] // Add response caching
+        public async Task<ActionResult<APIResponse>> SendDataToAIModel([FromQuery] string userId, int batchsize)
         {
             try
             {
-              
+
                 _logger.LogInformation($"Request received for blood pressure prediction: {userId}");
 
-                var prediction = await _aIModelService.PredictBloodPressure(userId, batchsize);
+                var prediction = await _aIModelService.CalculateHeartBeat(userId, batchsize);
 
-                if (prediction == null || prediction.sbp == null || prediction.dbp == null)
+                if (prediction == null || prediction.HeartRate == null )
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
                     return BadRequest(_response);
                 }
-
-                // Calculate average as a simple way to consolidate multiple predictions
-                var avgSystolic = prediction.sbp.Average();
-                var avgDiastolic = prediction.dbp.Average()+10;
-                // Determine blood pressure category
-                var category = _aIModelService.DetermineBloodPressureCategory(avgSystolic, avgDiastolic);
-                // Store the prediction in the database
-                await _aIModelService.StoreBloodPressurePrediction(userId, avgSystolic, avgDiastolic, category);
+                var heartrate = prediction.HeartRate;
+                var category = _aIModelService.DetermineHeartBeatStatus(heartrate);
+                await _aIModelService.StoreHeartRate(userId,heartrate, category);
                 _response.StatusCode = HttpStatusCode.OK;
-                 _response.IsSuccess = true;
-                _response.Result =  new 
-                    {
-                    systolic = avgSystolic,
-                    diastolic = avgDiastolic,
+                _response.IsSuccess = true;
+                _response.Result = new
+                {
+                    heartrate = heartrate, 
                     category = category.ToString(),
                 };
-                
+
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -73,11 +61,11 @@ namespace HealthMonitoring.API.Controllers
             return _response;
         }
         [HttpGet("GetAllByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetRecentReadings(string userId)
+        public async Task<ActionResult<APIResponse>> GetHeartRateData(string userId)
         {
             try
             {
-                var result = await _aIModelService.GetRecentReadingsAsync(userId);
+                var result = await _aIModelService.GetUserHeartRateDataAsync(userId);
                 if (result == null || !result.Any())
                 {
                     _response.IsSuccess = false;
@@ -99,12 +87,12 @@ namespace HealthMonitoring.API.Controllers
             }
         }
         [HttpGet("GetLatestByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetLatestReading(string userId)
+        public async Task<ActionResult<APIResponse>> GetLatestHeartRate(string userId)
         {
             try
             {
-                var result = await _aIModelService.GetLatestReadingAsync(userId);
-                if (result == null)
+                var result = await _aIModelService.GetLatestHeartRateAsync(userId);
+                if (result == null )
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -125,11 +113,11 @@ namespace HealthMonitoring.API.Controllers
             }
         }
         [HttpGet("GetRangeByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetReadingsByDateRange(string userId, DateTime startdate, DateTime enddata)
+        public async Task<ActionResult<APIResponse>> GetHeartRatesByDateRange(string userId,DateTime startdate,DateTime enddata)
         {
             try
             {
-                var result = await _aIModelService.GetReadingsByDateRangeAsync(userId, startdate, enddata);
+                var result = await _aIModelService.GetHeartRatesByDateRangeAsync(userId, startdate, enddata);
                 if (result == null || !result.Any())
                 {
                     _response.IsSuccess = false;

@@ -108,7 +108,8 @@ namespace HealthMonitoring.BLL.Services
                     Category = Category
                 };            
                 await _unitOfWork.HeartRateDatas.CreateAsync(reading);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {

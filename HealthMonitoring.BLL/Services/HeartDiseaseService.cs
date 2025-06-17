@@ -93,7 +93,8 @@ namespace HealthMonitoring.BLL.Services
                 };
              
                 await _unitOfWork.HeartDiseases.CreateAsync(reading);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {

@@ -19,6 +19,10 @@ namespace HealthMonitoring.DAL.IRepository
          Task<T> UpdateAsync(T entity);
          Task RemoveAsync(T entity);
         public  Task AddrangeAsync(T entity);
+        Task<T> GetByIdAsync(object id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task DeleteAsync(object id);
+        Task<bool> ExistsAsync(object id);
 
 
 

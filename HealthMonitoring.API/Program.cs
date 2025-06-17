@@ -41,6 +41,8 @@ builder.Services.AddScoped<IMailingService, MailingService>();
 builder.Services.AddScoped<ISMSService, SMSService>();
 builder.Services.AddAutoMapper(typeof(MppingProfille));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmergancyContactReppository, EmergancyContactReppository>();
 builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<IBloodPressurePredictionService, BloodPressurePredictionService>();
@@ -52,10 +54,7 @@ builder.Services.AddScoped<IEmergencyContactService, EmergencyContactService>();
 builder.Services.AddScoped<IAuthServices, AuthServices>();
 builder.Services.AddScoped<IBaseSrvice, BaseService>(); 
 builder.Services.AddScoped<ISMSService, SMSService>();
-
-
 builder.Services.AddMemoryCache();
-
 #region Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options => 
 {
@@ -65,11 +64,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
     Options.Password.RequiredLength = 5;
     Options.SignIn.RequireConfirmedAccount = true;
     Options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
-
 }) .AddEntityFrameworkStores<HealthMonitoringContext>()
 .AddDefaultTokenProviders();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
-    opt.TokenLifespan = TimeSpan.FromHours(24)); // default is 1 day
+opt.TokenLifespan = TimeSpan.FromHours(24)); // default is 1 day
 #endregion
 #region Authenyication
 var key = builder.Configuration.GetValue<string>("ApiSettings:SecretKey");
@@ -88,8 +86,6 @@ builder.Services.AddAuthentication(a =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
-
-
 });
 #endregion
 builder.Services.AddSwaggerGen(c =>
@@ -110,7 +106,6 @@ builder.Services.AddSwaggerGen(c =>
             Name = "Exaple License",
             Url = new Uri("https://example.com/terms")
         }
-
     });
     c.SwaggerDoc("v2", new OpenApiInfo
     {
@@ -128,7 +123,6 @@ builder.Services.AddSwaggerGen(c =>
             Name = "Exaple License",
             Url = new Uri("https://example.com/terms")
         }
-
     });
     c.UseInlineDefinitionsForEnums();
     c.DocumentFilter<CustomSwaggerOrder>();
@@ -152,37 +146,25 @@ builder.Services.AddSwaggerGen(c =>
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
-                //Scheme = "oauth2",
-                //         Name= "Bearer",
-                //         In = ParameterLocation.Header
             },
             new List<string>()
         }
     });
-
 });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() ||app.Environment.IsProduction())
 {
-
-
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthMonitoring_V1");
         options.SwaggerEndpoint("/swagger/v2/swagger.json", "HealthMonitoring_V2");
-         options.RoutePrefix = string.Empty; // for deploying "/"
+        //options.RoutePrefix = string.Empty; // for deploying "/"
     });
 }
-
-
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

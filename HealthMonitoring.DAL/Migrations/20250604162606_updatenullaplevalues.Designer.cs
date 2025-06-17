@@ -4,6 +4,7 @@ using HealthMonitoring.DAL.Data.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthMonitoring.DAL.Migrations
 {
     [DbContext(typeof(HealthMonitoringContext))]
-    partial class HealthMonitoringContextModelSnapshot : ModelSnapshot
+    [Migration("20250604162606_updatenullaplevalues")]
+    partial class updatenullaplevalues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace HealthMonitoring.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApplicationUserEmergencyContact", b =>
-                {
-                    b.Property<string>("ApplicationUsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmergencyContactsContactId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApplicationUsersId", "EmergencyContactsContactId");
-
-                    b.HasIndex("EmergencyContactsContactId");
-
-                    b.ToTable("ApplicationUserEmergencyContact");
-                });
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.AIModels.BloodPressureReading", b =>
                 {
@@ -274,9 +262,6 @@ namespace HealthMonitoring.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContactId"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -289,13 +274,13 @@ namespace HealthMonitoring.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Relationship")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ContactId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("EmergencyContacts");
                 });
@@ -459,21 +444,6 @@ namespace HealthMonitoring.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ApplicationUserEmergencyContact", b =>
-                {
-                    b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("ApplicationUsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HealthMonitoring.DAL.Data.Models.EmergencyContact", null)
-                        .WithMany()
-                        .HasForeignKey("EmergencyContactsContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.AIModels.BloodPressureReading", b =>
                 {
                     b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", "User")
@@ -511,6 +481,17 @@ namespace HealthMonitoring.DAL.Migrations
                 {
                     b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", "User")
                         .WithMany("activityDatas")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.EmergencyContact", b =>
+                {
+                    b.HasOne("HealthMonitoring.DAL.Data.Models.ApplicationUser", "User")
+                        .WithMany("EmergencyContacts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -582,6 +563,8 @@ namespace HealthMonitoring.DAL.Migrations
 
             modelBuilder.Entity("HealthMonitoring.DAL.Data.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("EmergencyContacts");
+
                     b.Navigation("HealthInformation");
 
                     b.Navigation("HeartRateDatas");

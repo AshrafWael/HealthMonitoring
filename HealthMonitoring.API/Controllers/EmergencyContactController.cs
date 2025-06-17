@@ -5,6 +5,11 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using HealthMonitoring.BLL.ApiResponse;
+using HealthMonitoring.BLL.Services;
+using System.Security.Claims;
+using Vonage.Users;
+using HealthMonitoring.BLL.APIRequst;
 
 namespace HealthMonitoring.API.Controllers
 {
@@ -12,145 +17,131 @@ namespace HealthMonitoring.API.Controllers
     [ApiController]
     public class EmergencyContactController : ControllerBase
     {
+        private readonly IAuthServices _authServices;
         private readonly IEmergencyContactService _service;
         private readonly APIResponse _response;
 
-        public EmergencyContactController(IEmergencyContactService service)
+        public EmergencyContactController(IAuthServices authServices, IEmergencyContactService service)
         {
+          _authServices = authServices;
             _service = service;
             _response = new APIResponse();
         }
-
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetAll()
-        {
-            try
-            {
-                var contacts = await _service.GetAllAsync();
-                _response.Result = contacts;
-                _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Errors.Add(ex.Message);
-                return StatusCode((int)_response.StatusCode, _response);
-            }
-        }
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetById(int id)
-        {
-            try
-            {
-                var contact = await _service.GetByIdAsync(id);
-                if (contact == null)
-                {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.Errors.Add("Contact not found.");
-                    return NotFound(_response);
-                }
-
-                _response.Result = contact;
-                _response.StatusCode = HttpStatusCode.OK;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Errors.Add(ex.Message);
-                return StatusCode((int)_response.StatusCode, _response);
-            }
-        }
-
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> Create([FromBody] EmergencyContactCreateDto dto)
+        public async Task<ActionResult<APIResponse>> CreateEmergencyContact(string Userid ,CreateEmergencyContactDto createDto)
         {
             try
             {
-                await _service.AddAsync(dto);
-                _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = "Contact created successfully.";
-                return StatusCode((int)_response.StatusCode, _response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors.Add(ex.Message);
-                return BadRequest(_response);
-            }
-        }
-
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> Update(int id, [FromBody] EmergencyContactUpdateDto dto)
-        {
-            try
-            {
-                if (id != dto.ContactId)
+                // Validate model state
+                if (!ModelState.IsValid)
                 {
+                    var errors = ModelState
+                        .SelectMany(ms => ms.Value.Errors.Select(e => e.ErrorMessage))
+                        .ToList();
+
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.Errors.Add("ID mismatch.");
+                    _response.Errors = errors;
                     return BadRequest(_response);
                 }
 
-                await _service.UpdateAsync(dto);
-                _response.StatusCode = HttpStatusCode.NoContent;
-                return StatusCode((int)_response.StatusCode, _response);
+                var result = await _service.CreateEmergencyContactAsync(Userid, createDto);
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = result;
+                return CreatedAtAction(nameof(GetContactById), new { id = result.ContactId }, _response);
             }
-            catch (Exception ex)
+
+            catch (InvalidOperationException ex)
             {
                 _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Errors.Add(ex.Message);
-                return StatusCode((int)_response.StatusCode, _response);
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
             }
-        }
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> Delete(int id)
+        }
+        // Get user with all emergency contacts
+        [HttpGet("{userId}/emergency-contacts")]
+        public async Task<ActionResult<UserDto>> GetUserWithEmergencyContacts(string userId)
         {
-            try
-            {
-                var existing = await _service.GetByIdAsync(id);
-                if (existing == null)
-                {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.Errors.Add("Contact not found.");
-                    return NotFound(_response);
-                }
+            var user = await _authServices.GetUserWithEmergencyContactsAsync(userId);
+            if (user == null)
+                return NotFound();
 
-                await _service.DeleteAsync(id);
-                _response.StatusCode = HttpStatusCode.NoContent;
-                return Ok( _response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.Errors.Add(ex.Message);
-                return Ok( _response);
-            }
+            return Ok(user);
         }
+
+        // Get user by email
+        [HttpGet("{email}/get-emergency-contacts")]
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+        {
+            var user = await _authServices.GetUserByEmailAsync(email);
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
+        //// Get all emergency contacts for a user by user ID
+        //[HttpGet("user/{userId}")]
+        //public async Task<ActionResult<IEnumerable<EmergencyContactDto>>> GetContactsByUserId(string userId)
+        //{
+        //    var contacts = await _service.GetContactsByUserIdAsync(userId);
+        //    return Ok(contacts);
+        //}
+
+        //// Get all emergency contacts for a user by email
+        //[HttpGet("user/email/{email}")]
+        //public async Task<ActionResult<IEnumerable<EmergencyContactDto>>> GetContactsByUserEmail(string email)
+        //{
+        //    var contacts = await _service.GetContactsByUserEmailAsync(email);
+        //    return Ok(contacts);
+        //}
+
+        // Get all users connected to an emergency contact
+        [HttpGet("{contactId}/get-users")]
+        public async Task<ActionResult<IEnumerable<ConectedUserDto>>> GetUsersByContactId(int contactId)
+        {
+            var users = await _service.GetUsersByContactIdAsync(contactId);
+            return Ok(users);
+        }
+
+        // Get emergency contact with all connected users
+        [HttpGet("{id}/emergency-contact-with-users")]
+        public async Task<ActionResult<EmergencyContactDto>> GetContactById(int id)
+        {
+            var contact = await _service.GetContactWithUsersAsync(id);
+            if (contact == null)
+                return NotFound();
+
+            return Ok(contact);
+        }
+
+        // Connect user to emergency contact by email
+        [HttpPost("connect")]
+        public async Task<ActionResult> ConnectUserToContact([FromBody] ConnectContactDto connectDto)
+        {
+            var result = await _service.ConnectUserToContactAsync(connectDto.UserEmail, connectDto.ContactId);
+
+            if (!result)
+                return BadRequest("Unable to connect user to emergency contact. User or contact not found.");
+
+            return Ok("User successfully connected to emergency contact.");
+        }
+
+        // Disconnect user from emergency contact
+        [HttpDelete("disconnect/{userId}/{contactId}")]
+        public async Task<ActionResult> DisconnectUserFromContact(string userId, int contactId)
+        {
+            var result = await _service.DisconnectUserFromContactAsync(userId, contactId);
+
+            if (!result)
+                return BadRequest("Unable to disconnect user from emergency contact.");
+
+            return Ok("User successfully disconnected from emergency contact.");
+        }
+   
+        
     }
-    }
+}

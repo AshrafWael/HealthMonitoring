@@ -14,16 +14,16 @@ namespace HealthMonitoring.DAL.Data.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Address   { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public int? Age { get; set; }
-        public int Weight { get; set; }
-        public int Height { get; set; }
+        public int? Weight { get; set; }
+        public int? Height { get; set; }
         public string? HealthGoals { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         //Navigation Proprty
-        public ICollection<EmergencyContact> EmergencyContacts { get; set; }
+        public ICollection<EmergencyContact> EmergencyContacts { get; set; } = new List<EmergencyContact>();
         public ICollection<ActivityData> activityDatas { get; set; }
         public ICollection<HeartDisease> HealthInformation { get; set; }
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }

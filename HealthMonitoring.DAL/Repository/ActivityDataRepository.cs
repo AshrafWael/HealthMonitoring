@@ -20,8 +20,6 @@ namespace HealthMonitoring.DAL.Repository
             public async Task GetByUserIdAsync(string userid)
         {
 
-
-
             await _dbcontext.ActivityDatas
                 .Where(a => a.UserId == userid)
                 .ToListAsync();

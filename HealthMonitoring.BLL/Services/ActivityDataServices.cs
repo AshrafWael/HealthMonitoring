@@ -35,7 +35,7 @@ namespace HealthMonitoring.BLL.Services
                 activity.RecordedAt = DateTime.UtcNow;
 
                await _unitOfWork.ActivityDatas.CreateAsync(activity);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation("Added new activity for user {UserId}", activity.UserId);
             }
@@ -88,7 +88,7 @@ namespace HealthMonitoring.BLL.Services
             }else
             {
               await  _unitOfWork.ActivityDatas.RemoveAsync(activity);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
                 _logger.LogInformation("Deleted activity for user {UserId}", id);
             }
         }
@@ -104,7 +104,8 @@ namespace HealthMonitoring.BLL.Services
             {
                 var mappedactvity =_mapper.Map<ActivityDataUpdateDto,ActivityData >(activityupdatedto, activity);
                await _unitOfWork.ActivityDatas.UpdateAsync(activity);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
                 _logger.LogInformation("Updated activity for user {UserId}", activityupdatedto.UserId);
             }
             return activityupdatedto;

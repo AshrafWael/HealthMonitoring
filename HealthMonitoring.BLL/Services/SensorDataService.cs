@@ -85,7 +85,8 @@ namespace HealthMonitoring.BLL.Services
                     }
 
                     await _unitOfWork.sensorDataSet.AddrangeAsync(batch);
-                     _unitOfWork.SaveChanges();
+                    await _unitOfWork.SaveChangesAsync();
+
                     totalImported += batch.Count;
 
                     _logger.LogInformation("Imported batch {BatchNumber} ({Count} readings) for user {UserId}",
@@ -291,7 +292,8 @@ namespace HealthMonitoring.BLL.Services
                 var mappedData = _mapper.Map<SensorDataSet>(sensorData);
                 // Delete the sensor data
               await  _unitOfWork.sensorDataSet.RemoveAsync(mappedData);
-                 _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
                 _logger.LogInformation("Deleted sensor data for user {UserId}", userid);
                 return true;
             }

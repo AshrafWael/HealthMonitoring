@@ -1,67 +1,54 @@
-﻿using System.Net;
-using HealthMonitoring.API.ApiResponse;
+﻿using HealthMonitoring.API.ApiResponse;
 using HealthMonitoring.BLL.IServices;
-using HealthMonitoring.BLL.Services;
-using HealthMonitoring.DAL.Data.Models.AIModels;
-using HealthMonitoring.DAL.UnitOfWork;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static HealthMonitoring.DAL.Consts.StaticData;
 
 namespace HealthMonitoring.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BloodPressurePredictionController : ControllerBase
+    public class HeartDiseasePredictionController : ControllerBase
     {
-        private readonly ISensorDataService _sensorDataService;
         private readonly ILogger<SensorDataController> _logger;
-        private readonly IBloodPressurePredictionService _aIModelService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHeartDiseaseService _aIModelService;
         protected APIResponse _response;
-        public BloodPressurePredictionController(ISensorDataService sensorDataService, ILogger<SensorDataController> logger
-            , IBloodPressurePredictionService aIModelService, IUnitOfWork unitOfWork)
+        public HeartDiseasePredictionController(ILogger<SensorDataController> logger
+            , IHeartDiseaseService aIModelService)
         {
-            _sensorDataService = sensorDataService;
             _logger = logger;
             _aIModelService = aIModelService;
-            _unitOfWork = unitOfWork;
             _response = new();
         }
 
         [HttpPost("send-ai")]
-        public async Task<ActionResult<APIResponse>> SendDataToAIModel([FromQuery] string userId,int batchsize)
+        [ResponseCache(Duration = 60)] // Add response caching
+        public async Task<ActionResult<APIResponse>> SendDataToAIModel([FromQuery] string userId, int batchsize)
         {
             try
             {
-              
+
                 _logger.LogInformation($"Request received for blood pressure prediction: {userId}");
 
-                var prediction = await _aIModelService.PredictBloodPressure(userId, batchsize);
+                var prediction = await _aIModelService.PredictHeartDisease(userId, batchsize);
 
-                if (prediction == null || prediction.sbp == null || prediction.dbp == null)
+                //if (prediction == null || prediction.Disease == null)
+                if (prediction == null )
+
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
+                        _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
                     return BadRequest(_response);
                 }
-
-                // Calculate average as a simple way to consolidate multiple predictions
-                var avgSystolic = prediction.sbp.Average();
-                var avgDiastolic = prediction.dbp.Average()+10;
-                // Determine blood pressure category
-                var category = _aIModelService.DetermineBloodPressureCategory(avgSystolic, avgDiastolic);
-                // Store the prediction in the database
-                await _aIModelService.StoreBloodPressurePrediction(userId, avgSystolic, avgDiastolic, category);
+                var heartdisease = prediction.Prediction;
+                await _aIModelService.StoreHeartDisease(userId, heartdisease);
                 _response.StatusCode = HttpStatusCode.OK;
-                 _response.IsSuccess = true;
-                _response.Result =  new 
-                    {
-                    systolic = avgSystolic,
-                    diastolic = avgDiastolic,
-                    category = category.ToString(),
+                _response.IsSuccess = true;
+                _response.Result = new
+                {
+                    prediction = prediction
                 };
-                
+
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -73,11 +60,11 @@ namespace HealthMonitoring.API.Controllers
             return _response;
         }
         [HttpGet("GetAllByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetRecentReadings(string userId)
+        public async Task<ActionResult<APIResponse>> GetUserHeartDiseaseData(string userId)
         {
             try
             {
-                var result = await _aIModelService.GetRecentReadingsAsync(userId);
+                var result = await _aIModelService.GetUserHeartDiseaseDataAsync(userId);
                 if (result == null || !result.Any())
                 {
                     _response.IsSuccess = false;
@@ -99,11 +86,11 @@ namespace HealthMonitoring.API.Controllers
             }
         }
         [HttpGet("GetLatestByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetLatestReading(string userId)
+        public async Task<ActionResult<APIResponse>> GetLatestHeartDisease(string userId)
         {
             try
             {
-                var result = await _aIModelService.GetLatestReadingAsync(userId);
+                var result = await _aIModelService.GetLatestHeartDiseaseAsync(userId);
                 if (result == null)
                 {
                     _response.IsSuccess = false;
@@ -125,11 +112,11 @@ namespace HealthMonitoring.API.Controllers
             }
         }
         [HttpGet("GetRangeByUserId/{userId}")]
-        public async Task<ActionResult<APIResponse>> GetReadingsByDateRange(string userId, DateTime startdate, DateTime enddata)
+        public async Task<ActionResult<APIResponse>> GetHeartDiseaseByDateRange(string userId, DateTime startdate, DateTime enddata)
         {
             try
             {
-                var result = await _aIModelService.GetReadingsByDateRangeAsync(userId, startdate, enddata);
+                var result = await _aIModelService.GetHeartDiseaseByDateRangeAsync(userId, startdate, enddata);
                 if (result == null || !result.Any())
                 {
                     _response.IsSuccess = false;
@@ -150,6 +137,5 @@ namespace HealthMonitoring.API.Controllers
                 return StatusCode((int)_response.StatusCode, _response);
             }
         }
-
     }
 }

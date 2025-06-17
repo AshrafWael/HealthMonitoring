@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace HealthMonitoring.BLL.Dtos.EmergencyContactDtos
 {
-    public class EmergencyContactCreateDto
+    public class EmergencyContactDto
     {
+        public int ContactId { get; set; }
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public string UserId { get; set; }
+       // public List<string> ConnectedUserIds { get; set; } = new List<string>();
+
     }
 }

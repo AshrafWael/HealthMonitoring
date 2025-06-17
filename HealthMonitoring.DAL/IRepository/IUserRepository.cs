@@ -11,5 +11,9 @@ namespace HealthMonitoring.DAL.IRepository
     public interface IUserRepository :IBaseRepository<ApplicationUser>
     {
         Task<ApplicationUser> FindUserAsync(Expression<Func<ApplicationUser, bool>> criteria);
+        Task<IEnumerable<ApplicationUser>> GetUsersByEmergencyContactIdAsync(int contactId);
+        Task<ApplicationUser> GetUserWithEmergencyContactsAsync(string userId);
+        Task<ApplicationUser> GetByEmailAsync(string email);
+       
     }
 }

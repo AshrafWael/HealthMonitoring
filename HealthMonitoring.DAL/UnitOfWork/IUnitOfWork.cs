@@ -18,7 +18,7 @@ namespace HealthMonitoring.DAL.UnitOfWork
         IBloodPressureReadingRepository bloodPressureReading {  get; }
         ISensorDataSetRepository sensorDataSet {  get; }
         IUserRepository Users { get; }
-        IBaseRepository<EmergencyContact> EmergencyContacts { get; }
-        int SaveChanges ();
+        IEmergancyContactReppository EmergancyContacts { get; }
+        Task<int> SaveChangesAsync();
     }
 }

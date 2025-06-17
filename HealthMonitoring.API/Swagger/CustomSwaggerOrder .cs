@@ -44,5 +44,44 @@ namespace HealthMonitoring.API.Swagger
 
             return int.MaxValue; // Anything not listed comes last
         }
+
+
+//        in my asp.net core web api i have those to etnity
+//   public class EmergencyContact
+//        {
+//            [Key]
+//            public int ContactId { get; set; }
+//            public string Name { get; set; }
+//            public string PhoneNumber { get; set; }
+//            public string Email { get; set; }
+
+//            public ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
+//        }
+//        public class ApplicationUser : IdentityUser
+//        {
+//            public string? Name { get; set; }
+//            public string? FirstName { get; set; }
+//            public string? LastName { get; set; }
+//            public string? Address { get; set; }
+//            public DateTime? DateOfBirth { get; set; }
+//            public string? Gender { get; set; }
+//            public int? Age { get; set; }
+//            public int? Weight { get; set; }
+//            public int? Height { get; set; }
+//            public string? HealthGoals { get; set; }
+//            public DateTime CreatedDate { get; set; } = DateTime.Now;
+//            public DateTime UpdatedAt { get; set; } = DateTime.Now;
+//            //Navigation Proprty
+//            public ICollection<EmergencyContact> EmergencyContacts { get; set; } = new List<EmergencyContact>();
+//            public ICollection<ActivityData> activityDatas { get; set; }
+//            public ICollection<HeartDisease> HealthInformation { get; set; }
+//            public ICollection<HeartRateData> HeartRateDatas { get; set; }
+//            public ICollection<BloodPressureReading> bloodPressureReadings { get; set; }
+//        }
+//        have an many to many relation between each other the efcore create a thired table called ApplicationUserEmergencyContact have an ApplicationUsersId and EmergencyContactsContactId
+//so how can i get data from two table
+//i am working on n-tair app so i want to add emergancy contact by user id and i want user can get all emergancy contact linked to hime by email  and name  and get them all
+//and emegancy contact can connect with the user by user email and can get all user connected to him
+//then make end point for all that
     }
 }

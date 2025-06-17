@@ -16,8 +16,7 @@ namespace HealthMonitoring.DAL.Configrations
         {
 
             builder.HasMany(u => u.EmergencyContacts)
-                  .WithOne(h => h.User)
-                  .HasForeignKey(EC => EC.UserId);
+                  .WithMany(h => h.ApplicationUsers);
 
             builder.HasMany(u=> u.activityDatas)
                    .WithOne(h=> h.User)

@@ -25,7 +25,31 @@ namespace HealthMonitoring.DAL.Repository
             {
                 throw new ("Error finding user with specified criteria", ex);
             }
-
+      
+    }
+        public async Task<ApplicationUser> GetByEmailAsync(string email)
+        {
+            return await _dbcontext.ApplicationUsers
+                .Include(u => u.EmergencyContacts)
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        public async Task<ApplicationUser> GetUserWithEmergencyContactsAsync(string userId)
+        {
+            return await _dbcontext.ApplicationUsers
+                .Include(u => u.EmergencyContacts)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByEmergencyContactIdAsync(int contactId)
+        {
+            return await _dbcontext.ApplicationUsers
+                .Where(u => u.EmergencyContacts.Any(ec => ec.ContactId == contactId))
+                .ToListAsync();
+        }
+
+       
+
+
     }
 }

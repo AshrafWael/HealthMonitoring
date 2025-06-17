@@ -15,10 +15,12 @@ using Azure;
 using System.Net;
 using HealthMonitoring.BLL.Dtos.ApplicationUserDtos.AccountUserDtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using HealthMonitoring.BLL.Dtos.EmergencyContactDtos;
 
 namespace HealthMonitoring.BLL.Services
 {
-    public class AuthServices :IAuthServices
+    public class AuthServices : IAuthServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
@@ -26,15 +28,16 @@ namespace HealthMonitoring.BLL.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMailingService _mailingService;
+        private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
         private string secretkey;
 
-        public AuthServices( IUnitOfWork unitOfWork,IConfiguration configuration,
+        public AuthServices(IUnitOfWork unitOfWork, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, IMapper mapper
             , RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> SignInManager,
-            IMailingService mailingService)
+            IMailingService mailingService,IMemoryCache cache)
         {
-            
+
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _userManager = userManager;
@@ -42,11 +45,12 @@ namespace HealthMonitoring.BLL.Services
             _roleManager = roleManager;
             _signInManager = SignInManager;
             _mailingService = mailingService;
+           _cache = cache;
             secretkey = configuration.GetValue<string>("ApiSettings:SecretKey")!;
         }
-        public async Task<bool> IsUniqueUser(string username)
+        public async Task<bool> IsUniqueUser(string username ,string email)
         {
-            var user = await _unitOfWork.Users.FindUserAsync(u => u.UserName == username);
+            var user = await _unitOfWork.Users.FindUserAsync(u => u.UserName == username || u.Email == email);
             if (user == null)
             {
                 return true;
@@ -104,16 +108,19 @@ namespace HealthMonitoring.BLL.Services
                 new Claim(ClaimTypes.Role,Roles.FirstOrDefault())
 
                }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(30),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenhandler.CreateToken(tokendescreptor);
+            // Map user to DTO
+            var userDto = _mapper.Map<ApplicationUserReadDto>(user);
+            userDto.Role = Roles.FirstOrDefault(); // Set the role manually
             LoginResponseDto loginResponse = new LoginResponseDto()
             {
 
                 Token = tokenhandler.WriteToken(token),
-                User = _mapper.Map<ApplicationUserReadDto>(user),
-                // Role = Roles.FirstOrDefault(),
+                User = userDto
+                
             };
             return loginResponse;
 
@@ -140,7 +147,7 @@ namespace HealthMonitoring.BLL.Services
 
                     if (!await _roleManager.RoleExistsAsync("Contributor"))
                         await _roleManager.CreateAsync(new IdentityRole("Contributor"));
-                 
+
                     // Create the user
                     var result = await _userManager.CreateAsync(user, registerRequestDto.Password);
                     if (result.Succeeded)
@@ -158,10 +165,18 @@ namespace HealthMonitoring.BLL.Services
 
                             await _userManager.AddToRoleAsync(user, roleToAssign);
                         }
-                         await ConfirmEmailAsync(user);
+                        await ConfirmEmailAsync(user);
                         var usertoreturn = await _unitOfWork.Users
-                        .FindUserAsync(u => u.Email == registerRequestDto.Email);
-                        return _mapper.Map<ApplicationUserReadDto>(usertoreturn);
+                           .FindUserAsync(u => u.Email == registerRequestDto.Email);
+
+                        // Get the user's roles
+                        var roles = await _userManager.GetRolesAsync(usertoreturn);
+                        var primaryRole = roles.FirstOrDefault(); // Get the first role
+
+                        // Map to DTO and set the role
+                        var userDto = _mapper.Map<ApplicationUserReadDto>(usertoreturn);
+                        userDto.Role = primaryRole;
+                        return userDto;
                     }
                 }
                 catch (Exception ex)
@@ -183,19 +198,89 @@ namespace HealthMonitoring.BLL.Services
             }
             var mappeduser = _mapper.Map(userUpdateDto, user);
             await  _unitOfWork.Users.UpdateAsync(mappeduser);
-                _unitOfWork.SaveChanges();
+            await _unitOfWork.SaveChangesAsync();
         }
-        public async Task<string> Logout()
+        public async Task<LogoutResponseDto> LogoutAsync(string userId, string token = null)
         {
+            var response = new LogoutResponseDto
+            {
+                LogoutTime = DateTime.UtcNow
+            };
+
             try
             {
-                await _signInManager.SignOutAsync();
-                return "Signed Out";
+                // Validate user exists
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User not found";
+                    response.Errors.Add("Invalid user ID");
+                    return response;
+                }
+
+                // Blacklist the current token if provided (for JWT)
+                if (!string.IsNullOrEmpty(token))
+                {
+                    try
+                    {
+                       BlacklistToken(token);
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.Message.FirstOrDefault();
+                    }
+                }
+
+                // Sign out using SignInManager (clears cookies and server-side sessions)
+                try
+                {
+                    await _signInManager.SignOutAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Continue with logout even if SignInManager fails
+                }
+
+                // Optional: Invalidate all user sessions/tokens (for high security apps)
+                // await InvalidateAllUserTokensAsync(userId);
+
+                response.IsSuccess = true;
+                response.Message = "Successfully logged out";
+
+                return response;
             }
             catch (Exception ex)
             {
-                throw new Exception("Logout failed", ex);
+                response.IsSuccess = false;
+                response.Message = "Logout failed due to server error";
+                response.Errors.Add("An unexpected error occurred during logout");
+                return response;
             }
+        }
+        public void BlacklistToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwt = tokenHandler.ReadJwtToken(token);
+                var expiry = jwt.ValidTo;
+
+                // Store in cache until token expires
+                _cache.Set($"blacklist_{token}", true, expiry);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public bool IsTokenBlacklisted(string token)
+        {
+            return _cache.TryGetValue($"blacklist_{token}", out _);
+        }
+        public async Task<bool> IsTokenBlacklistedAsync(string token)
+        {
+            return await Task.FromResult(IsTokenBlacklisted(token));
         }
         public async Task<bool> ConfirmEmailAsync(ApplicationUser user)
         {
@@ -252,8 +337,17 @@ namespace HealthMonitoring.BLL.Services
         }
         public async Task<List<ApplicationUserReadDto>> GetAllUsers()
         {
-         var users = await   _unitOfWork.Users.GetAllAsync();
-            return _mapper.Map<List<ApplicationUserReadDto>>(users);
+            var users = await _unitOfWork.Users.GetAllAsync();
+            var userDtos = new List<ApplicationUserReadDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var userDto = _mapper.Map<ApplicationUserReadDto>(user);
+                userDto.Role = roles.FirstOrDefault(); // Set the role
+                userDtos.Add(userDto);
+            }
+            return userDtos;
         }
         public async Task<ApplicationUserReadDto> GetUserByName(string username)
         {
@@ -262,7 +356,9 @@ namespace HealthMonitoring.BLL.Services
             {
                 throw new KeyNotFoundException($"User with username {username} not found.");
             }
+            var roles = await _userManager.GetRolesAsync(user);
             var mappeduser = _mapper.Map<ApplicationUserReadDto>(user);
+            mappeduser.Role = roles.FirstOrDefault(); // Set the role
             return mappeduser;
         }
         public async Task<ApplicationUserReadDto> GetUserById(string userid)
@@ -272,7 +368,21 @@ namespace HealthMonitoring.BLL.Services
             {
                 throw new KeyNotFoundException($"User with userid {userid} not found.");
             }
+            var roles = await _userManager.GetRolesAsync(user);
             var mappeduser = _mapper.Map<ApplicationUserReadDto>(user);
+            mappeduser.Role = roles.FirstOrDefault(); // Set the role
+            return mappeduser;
+        }
+        public async Task<UserDataReadDto> GetUserDataById(string userid)
+        {
+            var user = await _unitOfWork.Users.FindAsync(u => u.Id == userid);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with userid {userid} not found.");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var mappeduser = _mapper.Map<UserDataReadDto>(user);
+            mappeduser.Role = roles.FirstOrDefault(); // Set the role
             return mappeduser;
         }
         public async Task<bool> DeletUser(string userid)
@@ -325,7 +435,7 @@ namespace HealthMonitoring.BLL.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encodedToken = WebUtility.UrlEncode(token);
             
-            var resetLink = $"{_configuration["AppUrl"]}/api/Users/ResetForgotPassword?userId={user.Id}&token={encodedToken}";
+            var resetLink = $"{_configuration["AppUrl"]}/api/Users/ResetPasswordpage?userId={user.Id}&token={encodedToken}";
            // var decodedToken = WebUtility.UrlDecode(encodedToken);
             var body = GetResetPasswordEmailTemplate(resetLink);
 
@@ -362,6 +472,17 @@ namespace HealthMonitoring.BLL.Services
         </div>
     </body>
     </html>";
+        }
+
+        public async Task<UserDto> GetUserWithEmergencyContactsAsync(string userId)
+        {
+            var user = await _unitOfWork.Users.GetUserWithEmergencyContactsAsync(userId);
+            return _mapper.Map<UserDto>(user);
+        }
+        public async Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            var user = await _unitOfWork.Users.GetByEmailAsync(email);
+            return _mapper.Map<UserDto>(user);
         }
 
 

@@ -150,7 +150,8 @@ namespace HealthMonitoring.BLL.Services
                 };
 
                 await _unitOfWork.bloodPressureReading.CreateAsync(reading);
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {

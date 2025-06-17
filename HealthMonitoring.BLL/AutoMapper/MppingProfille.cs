@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using HealthMonitoring.BLL.APIRequst;
 using HealthMonitoring.BLL.Dtos.AccountUserDtos;
 using HealthMonitoring.BLL.Dtos.ActivityDataDtos;
 using HealthMonitoring.BLL.Dtos.AIModelDtos;
@@ -32,6 +33,10 @@ namespace HealthMonitoring.BLL.AutoMapper
 
             CreateMap<ApplicationUser, ApplicationUserReadDto>().ReverseMap();
             CreateMap<ApplicationUser, ApplicationUserUpdateDto>().ReverseMap();
+            CreateMap<ApplicationUser, UserDataReadDto>().ReverseMap();
+
+            CreateMap<ApplicationUser, ApplicationUserReadDto>()
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
 
             CreateMap<ApplicationUser, LoginRequest>().ReverseMap();
             CreateMap<ApplicationUser, RegisterRequestDto>().ReverseMap();
@@ -47,9 +52,27 @@ namespace HealthMonitoring.BLL.AutoMapper
             .ForMember(dest => dest.ECG, opt => opt.MapFrom(src => new List<double> { src.ECG }))
             .ReverseMap();
 
-            CreateMap<EmergencyContact, EmergencyContactReadDto>().ReverseMap();
-            CreateMap<EmergencyContactCreateDto, EmergencyContact>().ReverseMap();
-            CreateMap<EmergencyContactUpdateDto, EmergencyContact>().ReverseMap();
+            CreateMap<EmergencyContact, EmergencyContactDto>();
+            CreateMap<EmergencyContact, EmergencyContactWithUsersDto>()
+            .ForMember(dest => dest.ConnectedUsers,
+              opt => opt.MapFrom(src => src.ApplicationUsers.Select(u => u.FirstName).ToList()))
+            .ForMember(dest => dest.ConnectedUsers,
+              opt => opt.MapFrom(src => src.ApplicationUsers.Select(u => u.Email).ToList()));
+            CreateMap<CreateEmergencyContactDto, EmergencyContact>().ReverseMap();
+            CreateMap<EmergencyContact, EmergencyContactUpdateDto>().ReverseMap();
+            CreateMap<ApplicationUser, UserDto>()
+            .ForMember(dest => dest.EmergencyContacts,
+                opt => opt.MapFrom(src => src.EmergencyContacts));
+            CreateMap<CreateEmergencyContactDto, EmergencyContact>()
+       .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+       .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<EmergencyContact, EmergencyContactResponseDto>()
+                .ForMember(dest => dest.ConnectedUserIds,
+                    opt => opt.MapFrom(src => src.ApplicationUsers.Select(u => u.Id).ToList()));
+            CreateMap<ApplicationUser, ConectedUserDto>().ReverseMap();
+
+
 
             CreateMap<HeartRateData, HeartRateReadingDto>().ReverseMap();
             CreateMap<HeartRateData, HeartRateDataReadDto>().ReverseMap();
@@ -70,7 +93,6 @@ namespace HealthMonitoring.BLL.AutoMapper
 
             CreateMap<HeartRateData, HeartRateReadingDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.ToString())).ReverseMap();
-
             CreateMap<HeartDisease, HeartDiseasesReadingDto>().ReverseMap();
 
         }

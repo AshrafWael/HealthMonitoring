@@ -18,8 +18,8 @@ namespace HealthMonitoring.DAL.Data.DbHelper
         public HealthMonitoringContext(DbContextOptions<HealthMonitoringContext> dbContext) : base(dbContext) { }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<ActivityData> ActivityDatas { get; set; }
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
+        public DbSet<ActivityData> ActivityDatas { get; set; }
         public DbSet<HeartRateData> HeartRateDatas { get; set; }
         public DbSet<BloodPressureReading>  bloodPressureReadings { get; set; } 
         public DbSet<HeartDisease> HeartDiseases { get; set; }
@@ -29,8 +29,8 @@ namespace HealthMonitoring.DAL.Data.DbHelper
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ApplicationUserEntityTypeConfigration());
-            modelBuilder.ApplyConfiguration(new ActivityDataEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new EmergencyContactEntityTypeConfigration());
+            modelBuilder.ApplyConfiguration(new ActivityDataEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new HealthInformationEntityTypeConfigration());
             modelBuilder.ApplyConfiguration(new HeartRateDataEntityTypeConfigration());
 

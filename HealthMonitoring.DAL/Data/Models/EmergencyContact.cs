@@ -15,8 +15,10 @@ namespace HealthMonitoring.DAL.Data.Models
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public string? Relationship { get; set; } // New field
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+        public ICollection<ApplicationUser> ApplicationUsers { get; set; } = new List<ApplicationUser>();
     }
 }
