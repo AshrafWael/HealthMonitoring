@@ -42,11 +42,14 @@ builder.Services.AddScoped<ISMSService, SMSService>();
 builder.Services.AddAutoMapper(typeof(MppingProfille));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IActivityDataRepository, ActivityDataRepository>();
+builder.Services.AddScoped<ICaloriesPredictionRepository, CaloriesPredictionRepository>();
 builder.Services.AddScoped<IEmergancyContactReppository, EmergancyContactReppository>();
-builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<IBloodPressurePredictionService, BloodPressurePredictionService>();
 builder.Services.AddHttpClient<IBloodPressurePredictionService, BloodPressurePredictionService>();
+builder.Services.AddScoped<ICaloriesPredictionService, CaloriesPredictionService>();
+builder.Services.AddScoped<IActivityDataServices, ActivityDataServices>();
 builder.Services.AddHttpClient<BloodPressurePredictionService>();
 builder.Services.AddScoped<IHeartBeatService, HeartBeatService>();
 builder.Services.AddScoped<IHeartDiseaseService, HeartDiseaseService>();
@@ -161,7 +164,7 @@ if (app.Environment.IsDevelopment() ||app.Environment.IsProduction())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "HealthMonitoring_V1");
         options.SwaggerEndpoint("/swagger/v2/swagger.json", "HealthMonitoring_V2");
-        //options.RoutePrefix = string.Empty; // for deploying "/"
+        options.RoutePrefix = string.Empty; // for deploying "/"
     });
 }
 app.UseHttpsRedirection();

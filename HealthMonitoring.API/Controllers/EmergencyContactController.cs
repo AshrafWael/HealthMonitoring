@@ -65,22 +65,56 @@ namespace HealthMonitoring.API.Controllers
         [HttpGet("{userId}/emergency-contacts")]
         public async Task<ActionResult<UserDto>> GetUserWithEmergencyContacts(string userId)
         {
-            var user = await _authServices.GetUserWithEmergencyContactsAsync(userId);
-            if (user == null)
-                return NotFound();
+            try
+            {
+                 var user = await _authServices.GetUserWithEmergencyContactsAsync(userId);
+                if (user == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("failed");
+                    return NotFound(_response);
+                }
 
-            return Ok(user);
+                _response.Result = user;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
 
         // Get user by email
         [HttpGet("{email}/get-emergency-contacts")]
         public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
+            try
+            {
             var user = await _authServices.GetUserByEmailAsync(email);
-            if (user == null)
-                return NotFound();
+                if (user == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("failed");
+                    return NotFound(_response);
+                }
 
-            return Ok(user);
+                _response.Result = user;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
 
         //// Get all emergency contacts for a user by user ID
@@ -103,45 +137,115 @@ namespace HealthMonitoring.API.Controllers
         [HttpGet("{contactId}/get-users")]
         public async Task<ActionResult<IEnumerable<ConectedUserDto>>> GetUsersByContactId(int contactId)
         {
-            var users = await _service.GetUsersByContactIdAsync(contactId);
-            return Ok(users);
+            try
+            {
+            var result = await _service.GetUsersByContactIdAsync(contactId);
+                if (result == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("failed.");
+                    return NotFound(_response);
+                }
+
+                _response.Result = result;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
 
         // Get emergency contact with all connected users
         [HttpGet("{id}/emergency-contact-with-users")]
         public async Task<ActionResult<EmergencyContactDto>> GetContactById(int id)
         {
-            var contact = await _service.GetContactWithUsersAsync(id);
-            if (contact == null)
-                return NotFound();
 
-            return Ok(contact);
+
+            try
+            {
+            var contact = await _service.GetContactWithUsersAsync(id);
+                if (contact == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("failed to get contact.");
+                    return NotFound(_response);
+                }
+
+                _response.Result = contact;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
 
         // Connect user to emergency contact by email
         [HttpPost("connect")]
         public async Task<ActionResult> ConnectUserToContact([FromBody] ConnectContactDto connectDto)
         {
-            var result = await _service.ConnectUserToContactAsync(connectDto.UserEmail, connectDto.ContactId);
+            try
+            {
+                 var result = await _service.ConnectUserToContactAsync(connectDto.UserEmail, connectDto.ContactId);
+                if (result == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("CAN NOT CONECCT USER.");
+                    return NotFound(_response);
+                }
 
-            if (!result)
-                return BadRequest("Unable to connect user to emergency contact. User or contact not found.");
-
-            return Ok("User successfully connected to emergency contact.");
+                _response.Result = result;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
 
         // Disconnect user from emergency contact
         [HttpDelete("disconnect/{userId}/{contactId}")]
         public async Task<ActionResult> DisconnectUserFromContact(string userId, int contactId)
         {
-            var result = await _service.DisconnectUserFromContactAsync(userId, contactId);
+            try
+            {
+                var result = await _service.DisconnectUserFromContactAsync(userId, contactId);
+                if (result == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Errors.Add("CA NOT DISCONNECT USER.");
+                    return NotFound(_response);
+                }
 
-            if (!result)
-                return BadRequest("Unable to disconnect user from emergency contact.");
-
-            return Ok("User successfully disconnected from emergency contact.");
+                _response.Result = result;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Errors.Add(ex.Message);
+                return StatusCode((int)_response.StatusCode, _response);
+            }
         }
-   
-        
+
     }
 }

@@ -9,7 +9,9 @@ namespace HealthMonitoring.DAL.IRepository
 {
     public interface IActivityDataRepository :IBaseRepository<ActivityData>
     {
-        public Task GetByUserIdAsync(string userid);
-
+        Task<ActivityData> GetUserDayActivityAsync(string userId, int day);
+        Task<IEnumerable<ActivityData>> GetUserActivitiesAsync(string userId);
+        Task BulkInsertUserActivitiesAsync(string userId, IEnumerable<ActivityData> activities);
+        Task AddrangeAsync(List<ActivityData> batch);
     }
 }

@@ -48,8 +48,24 @@ namespace HealthMonitoring.DAL.Repository
                 .ToListAsync();
         }
 
-       
+        public async Task<ApplicationUser> GetUserWithActivitiesAsync(string userId)
+        {
+            return await _dbcontext.ApplicationUsers
+                .Include(u => u.activityDatas)
+                .Include(u=> u.CaloriesPredictions)
+                .FirstOrDefaultAsync(u=> u.Id == userId);
+        }
 
-
+        public async Task UpdateUserWeightAsync(string userId, double newWeight)
+        {
+           var user  = await _dbcontext.ApplicationUsers.FindAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            user.WeightKg = newWeight;
+            user.UpdatedAt = DateTime.UtcNow; // Update the timestamp
+           UpdateAsync(user);
+        }
     }
 }

@@ -69,7 +69,7 @@ namespace HealthMonitoring.API.Controllers
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Errors.Add("UserName Or Password Is Incorrect Or Confirm Your Email");
+                _response.Errors.Add("UserName Or Password Is Incorrect ");
                 return BadRequest(_response);
             }
             _response.IsSuccess = true;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using HealthMonitoring.BLL.APIRequst;
 using HealthMonitoring.BLL.Dtos.AccountUserDtos;
 using HealthMonitoring.BLL.Dtos.ActivityDataDtos;
@@ -16,6 +11,12 @@ using HealthMonitoring.BLL.Dtos.HeartRateDataDtos;
 using HealthMonitoring.DAL.Data.Models;
 using HealthMonitoring.DAL.Data.Models.AIModels;
 using Microsoft.AspNetCore.Identity.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vonage.Users;
 
 namespace HealthMonitoring.BLL.AutoMapper
 {
@@ -23,13 +24,19 @@ namespace HealthMonitoring.BLL.AutoMapper
     {
         public MppingProfille()
         {
-     //       CreateMap<ActivityData, ActivityDataReadDto>()
-     //.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+            //       CreateMap<ActivityData, ActivityDataReadDto>()
+            //.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
 
-            CreateMap<ActivityData, ActivityDataCreateDto>().ReverseMap();
-            CreateMap<ActivityData, ActivityDataReadDto>().ReverseMap();
-            CreateMap<ActivityData, ActivityDataUpdateDto>().ReverseMap();
+            CreateMap<ActivityData, DailyActivityDataDto>().ReverseMap();
+
+            CreateMap<ApplicationUser, UserActivityJsonDto>().ReverseMap();
+
+
+            CreateMap<CaloriesPrediction, CaloriesPredictionResponseDto>();
+               // .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.ActivityData.Day));
+              // .ForMember(dest => dest.UpdatedWeight, opt => opt.MapFrom(src => src.ActivityData.WeightKg))
+              //  .ForMember(dest => dest.ActivityData, opt => opt.MapFrom(src => src.ActivityData));
 
             CreateMap<ApplicationUser, ApplicationUserReadDto>().ReverseMap();
             CreateMap<ApplicationUser, ApplicationUserUpdateDto>().ReverseMap();

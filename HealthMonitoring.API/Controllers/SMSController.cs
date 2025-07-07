@@ -16,7 +16,7 @@ namespace HealthMonitoring.API.Controllers
         {
             _Sms = sMS;
         }
-        [HttpPost("SendSMS")]
+        [HttpPost("SendSMS/twilio")]
         public IActionResult SendSMS(SendSMSDto dto)
         {
             try

@@ -15,15 +15,39 @@ namespace HealthMonitoring.DAL.Repository
         private readonly HealthMonitoringContext _dbcontext;
 
         public ActivityDataRepository(HealthMonitoringContext dbcontext) : base(dbcontext)
-        { 
-        }
-            public async Task GetByUserIdAsync(string userid)
         {
+            _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
 
-            await _dbcontext.ActivityDatas
-                .Where(a => a.UserId == userid)
+        }
+
+        public async Task BulkInsertUserActivitiesAsync(string userId, IEnumerable<ActivityData> activities)
+        {
+            var existingActivities = await _dbcontext.ActivityDatas
+                .Where(a => a.UserId == userId)
                 .ToListAsync();
+            _dbcontext.ActivityDatas.RemoveRange(existingActivities); 
+            
+            foreach (var activity in activities)
+            {
+                activity.UserId = userId;
+                activity.CreatedAt = DateTime.UtcNow;
+                activity.UpdatedAt = DateTime.UtcNow;
+            }
+            await _dbcontext.ActivityDatas.AddRangeAsync(activities);
+        }
 
+        public async Task<IEnumerable<ActivityData>> GetUserActivitiesAsync(string userId)
+        {
+            return await _dbcontext.ActivityDatas
+                 .Where(a => a.UserId == userId)
+                 .OrderBy(d => d.Day)
+                 .ToListAsync();
+        }
+
+        public async Task<ActivityData> GetUserDayActivityAsync(string userId, int day)
+        {
+        return await _dbcontext.ActivityDatas
+                .FirstOrDefaultAsync(a => a.UserId == userId && a.Day == day);  
         }
     }
 }

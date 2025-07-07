@@ -20,7 +20,7 @@ namespace HealthMonitoring.BLL.Dtos.ApplicationUserDtos
         public DateTime? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public int? Age { get; set; }
-        public int? Weight { get; set; }
+        public double WeightKg { get; set; }
         public int? Height { get; set; }
         public string? HealthGoals { get; set; }
         public DateTime CreatedDate { get; set; } 

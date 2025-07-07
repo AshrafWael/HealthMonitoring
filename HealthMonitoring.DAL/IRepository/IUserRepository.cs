@@ -14,6 +14,8 @@ namespace HealthMonitoring.DAL.IRepository
         Task<IEnumerable<ApplicationUser>> GetUsersByEmergencyContactIdAsync(int contactId);
         Task<ApplicationUser> GetUserWithEmergencyContactsAsync(string userId);
         Task<ApplicationUser> GetByEmailAsync(string email);
-       
+        Task<ApplicationUser> GetUserWithActivitiesAsync(string userId);
+        Task UpdateUserWeightAsync(string userId, double newWeight);
+
     }
 }

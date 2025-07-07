@@ -9,11 +9,7 @@ namespace HealthMonitoring.BLL.IServices
 {
     public interface IActivityDataServices
     {
-       Task< IEnumerable<ActivityDataReadDto>> GetAll();
-        Task Add(ActivityDataCreateDto activitycreatdto);
-        Task<ActivityDataUpdateDto> Update(ActivityDataUpdateDto activityupdatedto,int id);
-        Task<List<ActivityDataReadDto>>  GetByUserId(string userid);
-        Task Delete(int userid);
-       
+        Task<AiModelResponseDto> PredictCaloriesAsync(AiModelRequestDto request);
+
     }
 }

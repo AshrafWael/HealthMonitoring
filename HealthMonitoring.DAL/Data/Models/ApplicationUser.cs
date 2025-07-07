@@ -17,7 +17,7 @@ namespace HealthMonitoring.DAL.Data.Models
         public DateTime? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public int? Age { get; set; }
-        public int? Weight { get; set; }
+        public double? WeightKg { get; set; }
         public int? Height { get; set; }
         public string? HealthGoals { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
@@ -25,6 +25,7 @@ namespace HealthMonitoring.DAL.Data.Models
         //Navigation Proprty
         public ICollection<EmergencyContact> EmergencyContacts { get; set; } = new List<EmergencyContact>();
         public ICollection<ActivityData> activityDatas { get; set; }
+        public  ICollection<CaloriesPrediction> CaloriesPredictions { get; set; }
         public ICollection<HeartDisease> HealthInformation { get; set; }
         public ICollection<HeartRateData> HeartRateDatas  { get; set; }
         public ICollection<BloodPressureReading> bloodPressureReadings { get; set; }

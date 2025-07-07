@@ -22,6 +22,7 @@ namespace HealthMonitoring.DAL.UnitOfWork
         public IUserRepository Users { get; private set; }
         public IEmergancyContactReppository EmergancyContacts { get; private set; }
         public IActivityDataRepository ActivityDatas { get; private set; }
+        public ICaloriesPredictionRepository CaloriesPredictions { get; private set; }
         public IHeartRateDataRepository HeartRateDatas { get; private set; }
         public IHeartDiseaseRepository HeartDiseases { get; private set; }
         public IBloodPressureReadingRepository bloodPressureReading { get; private set; }
@@ -32,6 +33,7 @@ namespace HealthMonitoring.DAL.UnitOfWork
             _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
 
             ActivityDatas = new ActivityDataRepository(_dbcontext);
+            CaloriesPredictions = new CaloriesPredictionRepository(_dbcontext);
             HeartRateDatas = new HeartRateDataRepository(_dbcontext);
             HeartDiseases = new HeartDiseaseRepository(_dbcontext);
             bloodPressureReading = new BloodPressureReadingRepository(_dbcontext);

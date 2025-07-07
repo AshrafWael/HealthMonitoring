@@ -92,6 +92,13 @@ namespace HealthMonitoring.DAL.Repository
         {
             await _dbset.AddRangeAsync(entity);
         }
+        public Task AddrangeAsync(List<T> entity)
+            {
+            if (entity == null || entity.Count == 0)
+                throw new ArgumentNullException(nameof(entity));
+            return _dbset.AddRangeAsync(entity);
+        }
+
         public async Task RemoveAsync(T entity)
         {
             _dbset.Remove(entity);

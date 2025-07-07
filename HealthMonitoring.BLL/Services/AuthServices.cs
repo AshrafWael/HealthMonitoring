@@ -75,15 +75,15 @@ namespace HealthMonitoring.BLL.Services
                 };
             }
       
-            if (user.EmailConfirmed == false)
-            {
-                return new LoginResponseDto()
-                {
-                    Token = "",
-                    User = null
+            //if (user.EmailConfirmed == false)
+            //{
+            //    return new LoginResponseDto()
+            //    {
+            //        Token = "",
+            //        User = null
                     
-                };
-            }
+            //    };
+            //}
             bool IsValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
             if ( IsValid == false)
             {
@@ -165,7 +165,7 @@ namespace HealthMonitoring.BLL.Services
 
                             await _userManager.AddToRoleAsync(user, roleToAssign);
                         }
-                        await ConfirmEmailAsync(user);
+                      //  await ConfirmEmailAsync(user);
                         var usertoreturn = await _unitOfWork.Users
                            .FindUserAsync(u => u.Email == registerRequestDto.Email);
 

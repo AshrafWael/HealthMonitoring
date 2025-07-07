@@ -80,7 +80,6 @@ namespace HealthMonitoring.BLL.Services
             var users = await _unitOfWork.EmergancyContacts.GetUsersByContactEmailAsync(contactEmail);
             return _mapper.Map<List<UserDto>>(users);
         }
-
         public async Task<EmergencyContactResponseDto> CreateEmergencyContactAsync(CreateEmergencyContactDto createDto)
         {
             try
@@ -123,25 +122,21 @@ namespace HealthMonitoring.BLL.Services
                 throw;
             }
         }
-
         public async Task<IEnumerable<EmergencyContactDto>> GetContactsByUserIdAsync(string userId)
         {
             var contacts = await _unitOfWork.EmergancyContacts.GetContactsByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<EmergencyContactDto>>(contacts);
         }
-
         public async Task<IEnumerable<EmergencyContactDto>> GetContactsByUserEmailAsync(string email)
         {
             var contacts = await _unitOfWork.EmergancyContacts.GetContactsByUserEmailAsync(email);
             return _mapper.Map<IEnumerable<EmergencyContactDto>>(contacts);
         }
-
         public async Task<IEnumerable<ConectedUserDto>> GetUsersByContactIdAsync(int contactId)
         {
             var users = await _unitOfWork.Users.GetUsersByEmergencyContactIdAsync(contactId);
             return _mapper.Map<IEnumerable<ConectedUserDto>>(users);
         }
-
         public async Task<bool> ConnectUserToContactAsync(string userEmail, int contactId)
         {
             try
@@ -166,7 +161,6 @@ namespace HealthMonitoring.BLL.Services
                 return false;
             }
         }
-
         public async Task<bool> DisconnectUserFromContactAsync(string userId, int contactId)
         {
             try
@@ -189,7 +183,6 @@ namespace HealthMonitoring.BLL.Services
                 return false;
             }
         }
-
         public async Task<EmergencyContactWithUsersDto> GetContactWithUsersAsync(int contactId)
         {
             var contact = await _unitOfWork.EmergancyContacts.GetContactWithUsersAsync(contactId);
